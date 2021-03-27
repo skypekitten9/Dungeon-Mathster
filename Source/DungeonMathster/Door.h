@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
 #include "Components/AudioComponent.h"
+#include "Sound/SoundBase.h"
 #include "Door.generated.h"
 
 
@@ -24,11 +25,15 @@ protected:
 
 private:
 	void SetUpRotators();
+	void SetUpSound();
 	void Progress(float DeltaTime);
-	UPROPERTY(EditAnywhere) UAudioComponent* AudioComponent = nullptr;
+	void PlaySound(bool open);
+	UPROPERTY(EditAnywhere) TArray<USoundBase*> OpenSounds;
+	UPROPERTY(EditAnywhere) TArray<USoundBase*> CloseSounds;
 	UPROPERTY(EditAnywhere) float DegreesToOpen = 90.f;
 	UPROPERTY(EditAnywhere) float OpenSpeed = 2;
 	UPROPERTY(EditAnywhere) float CloseSpeed = 2;
+	UAudioComponent* AudioComponent = nullptr;
 	FRotator InitialRotation, TargetRotation, CurrentRotation;
 	bool InProgress = false;
 };

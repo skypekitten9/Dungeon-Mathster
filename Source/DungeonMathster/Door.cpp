@@ -1,4 +1,5 @@
 #include "Door.h"
+#include "GameFramework/Actor.h"
 #include "Math/UnrealMathUtility.h"
 
 #define OUT
@@ -15,6 +16,7 @@ void UDoor::BeginPlay()
 {
 	Super::BeginPlay();
 	SetUpRotators();
+	SetUpSound();
 }
 
 void UDoor::SetUpRotators()
@@ -25,16 +27,45 @@ void UDoor::SetUpRotators()
 	TargetRotation.Yaw = InitialRotation.Yaw + DegreesToOpen;
 }
 
+void UDoor::SetUpSound()
+{
+	AudioComponent = GetOwner()->FindComponentByClass<UAudioComponent>();
+	if (NULLGUARD !AudioComponent)
+	{
+		UE_LOG(LogTemp, Error, TEXT("Actor %s is missing component 'UAudioComponent'."), *(GetOwner()->GetName()));
+	}
+	if (OpenSounds.Num() == 0)
+	{
+		UE_LOG(LogTemp, Error, TEXT("Actor %s is missing sounds."), *(GetOwner()->GetName()));
+	}
+	for (USoundBase* s : OpenSounds)
+	{
+		if (NULLGUARD !s)
+		{
+			UE_LOG(LogTemp, Error, TEXT("Actor %s is missing a sound."), *(GetOwner()->GetName()));
+		}
+	}
+	for (USoundBase* s : CloseSounds)
+	{
+		if (NULLGUARD !s)
+		{
+			UE_LOG(LogTemp, Error, TEXT("Actor %s is missing a sound."), *(GetOwner()->GetName()));
+		}
+	}
+}
+
 void UDoor::Close()
 {
 	InProgress = true;
 	TargetRotation.Yaw = InitialRotation.Yaw;
+	PlaySound(false);
 }
 
 void UDoor::Open()
 {
 	InProgress = true;
 	TargetRotation.Yaw = InitialRotation.Yaw + DegreesToOpen;
+	PlaySound(true);
 }
 
 void UDoor::Progress(float DeltaTime)
@@ -48,6 +79,24 @@ void UDoor::Progress(float DeltaTime)
 		InProgress = false;
 		UE_LOG(LogTemp, Display, TEXT("Door progression done!"));
 	}
+}
+
+void UDoor::PlaySound(bool Open)
+{
+	if (NULLGUARD !AudioComponent) return;
+	if (Open)
+	{
+		int32 RandomNum = FMath::RandRange(0, OpenSounds.Num() - 1);
+		if (NULLGUARD !OpenSounds[RandomNum]) return;
+		AudioComponent->SetSound(OpenSounds[RandomNum]);
+	}
+	else
+	{
+		int32 RandomNum = FMath::RandRange(0, CloseSounds.Num() - 1);
+		if (NULLGUARD !CloseSounds[RandomNum]) return;
+		AudioComponent->SetSound(CloseSounds[RandomNum]);
+	}
+	AudioComponent->Play();
 }
 
 // Called every frame
