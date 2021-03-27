@@ -19,13 +19,14 @@ public:
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 	void Close();
 	void Open();
+	bool IsOpen();
 
 protected:
 	virtual void BeginPlay() override;
 
 private:
-	void SetUpRotators();
-	void SetUpSound();
+	void SetupRotators();
+	void SetupSound();
 	void Progress(float DeltaTime);
 	void PlaySound(bool open);
 	UPROPERTY(EditAnywhere) TArray<USoundBase*> OpenSounds;
@@ -36,4 +37,5 @@ private:
 	UAudioComponent* AudioComponent = nullptr;
 	FRotator InitialRotation, TargetRotation, CurrentRotation;
 	bool InProgress = false;
+	bool Opened = false;
 };

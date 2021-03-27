@@ -15,11 +15,11 @@ UDoor::UDoor()
 void UDoor::BeginPlay()
 {
 	Super::BeginPlay();
-	SetUpRotators();
-	SetUpSound();
+	SetupRotators();
+	SetupSound();
 }
 
-void UDoor::SetUpRotators()
+void UDoor::SetupRotators()
 {
 	InitialRotation = GetOwner()->GetActorRotation();
 	CurrentRotation = InitialRotation;
@@ -27,7 +27,7 @@ void UDoor::SetUpRotators()
 	TargetRotation.Yaw = InitialRotation.Yaw + DegreesToOpen;
 }
 
-void UDoor::SetUpSound()
+void UDoor::SetupSound()
 {
 	AudioComponent = GetOwner()->FindComponentByClass<UAudioComponent>();
 	if (NULLGUARD !AudioComponent)
@@ -57,6 +57,7 @@ void UDoor::SetUpSound()
 void UDoor::Close()
 {
 	InProgress = true;
+	Opened = false;
 	TargetRotation.Yaw = InitialRotation.Yaw;
 	PlaySound(false);
 }
@@ -64,8 +65,14 @@ void UDoor::Close()
 void UDoor::Open()
 {
 	InProgress = true;
+	Opened = true;
 	TargetRotation.Yaw = InitialRotation.Yaw + DegreesToOpen;
 	PlaySound(true);
+}
+
+bool UDoor::IsOpen()
+{
+	return Opened;
 }
 
 void UDoor::Progress(float DeltaTime)
