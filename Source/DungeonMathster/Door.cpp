@@ -25,30 +25,38 @@ void UDoor::SetUpRotators()
 	TargetRotation.Yaw = InitialRotation.Yaw + DegreesToOpen;
 }
 
-
-void UDoor::ToggleDoor(bool ToOpen)
+void UDoor::Close()
 {
-
+	InProgress = true;
+	TargetRotation.Yaw = InitialRotation.Yaw;
 }
 
-void UDoor::Close(float DeltaTime)
+void UDoor::Open()
 {
-
+	InProgress = true;
+	TargetRotation.Yaw = InitialRotation.Yaw + DegreesToOpen;
 }
 
-void UDoor::Open(float DeltaTime)
+void UDoor::Progress(float DeltaTime)
 {
 	CurrentRotation = GetOwner()->GetActorRotation();
 	FRotator ToRotate = InitialRotation;
 	ToRotate.Yaw = FMath::FInterpTo(CurrentRotation.Yaw, TargetRotation.Yaw, DeltaTime, OpenSpeed);
 	GetOwner()->SetActorRotation(ToRotate);
-	UE_LOG(LogTemp, Warning, TEXT("Rotation set to %s"), *ToRotate.ToString());
+	if (FMath::IsNearlyEqual(ToRotate.Yaw, TargetRotation.Yaw, 1.f))
+	{
+		InProgress = false;
+		UE_LOG(LogTemp, Display, TEXT("Door progression done!"));
+	}
 }
 
 // Called every frame
 void UDoor::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
-	Open(DeltaTime);
+	if (InProgress)
+	{
+		Progress(DeltaTime);
+	}
 }
 

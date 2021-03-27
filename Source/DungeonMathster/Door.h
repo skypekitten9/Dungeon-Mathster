@@ -16,18 +16,19 @@ class DUNGEONMATHSTER_API UDoor : public UActorComponent
 public:	
 	UDoor();
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
-	void ToggleDoor(bool ToOpen);
+	void Close();
+	void Open();
 
 protected:
 	virtual void BeginPlay() override;
 
 private:
 	void SetUpRotators();
-	void Close(float DeltaTime);
-	void Open(float DeltaTime);
+	void Progress(float DeltaTime);
 	UPROPERTY(EditAnywhere) UAudioComponent* AudioComponent = nullptr;
 	UPROPERTY(EditAnywhere) float DegreesToOpen = 90.f;
 	UPROPERTY(EditAnywhere) float OpenSpeed = 2;
 	UPROPERTY(EditAnywhere) float CloseSpeed = 2;
 	FRotator InitialRotation, TargetRotation, CurrentRotation;
+	bool InProgress = false;
 };
