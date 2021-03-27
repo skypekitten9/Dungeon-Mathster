@@ -58,9 +58,19 @@ void URoom::VerifyTriggerVolume()
 void URoom::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
-	if (DoorComponent && DoorComponent->IsOpen() == false)
+	if (TriggerVolume && TriggerVolume->IsOverlappingActor(Player))
 	{
-		DoorComponent->Open();
+		if (DoorComponent && DoorComponent->IsOpen() == false)
+		{
+			DoorComponent->Open();
+		}
+	}
+	else
+	{
+		if (DoorComponent && DoorComponent->IsOpen() == true)
+		{
+			DoorComponent->Close();
+		}
 	}
 }
 

@@ -79,7 +79,16 @@ void UDoor::Progress(float DeltaTime)
 {
 	CurrentRotation = GetOwner()->GetActorRotation();
 	FRotator ToRotate = InitialRotation;
-	ToRotate.Yaw = FMath::FInterpTo(CurrentRotation.Yaw, TargetRotation.Yaw, DeltaTime, OpenSpeed);
+	float Speed = 0.f;
+	if (IsOpen())
+	{
+		Speed = OpenSpeed;
+	}
+	else
+	{
+		Speed = CloseSpeed;
+	}
+	ToRotate.Yaw = FMath::FInterpTo(CurrentRotation.Yaw, TargetRotation.Yaw, DeltaTime, Speed);
 	GetOwner()->SetActorRotation(ToRotate);
 	if (FMath::IsNearlyEqual(ToRotate.Yaw, TargetRotation.Yaw, 1.f))
 	{
