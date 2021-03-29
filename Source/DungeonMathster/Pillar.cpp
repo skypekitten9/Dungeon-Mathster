@@ -18,7 +18,6 @@ void UPillar::BeginPlay()
 	if (RoomActor) RoomComponent = RoomActor->FindComponentByClass<URoom>();
 	VerifyPointers();
 	SetupPositions();
-	ActivatePillar();
 }
 
 
@@ -81,6 +80,7 @@ void UPillar::Reset()
 void UPillar::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
+	if (TriggerVolume->IsOverlappingActor(ActorOnPillar) == false && Activated == false) ActivatePillar();
 	if (Activated) Progress(DeltaTime);
 }
 
