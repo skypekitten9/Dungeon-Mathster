@@ -14,9 +14,8 @@ class DUNGEONMATHSTER_API UPillar : public UActorComponent
 	GENERATED_BODY()
 
 public:	
-	// Sets default values for this component's properties
+	float Answer = 0.f;
 	UPillar();
-	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
 protected:
@@ -24,15 +23,15 @@ protected:
 	virtual void BeginPlay() override;
 
 private:
-	float Answer = 0.f;
 	URoom* RoomComponent = nullptr;
 	bool Activated = false;
+	bool InProgress = false;
 	UPROPERTY(EditAnywhere) AActor* ActorOnPillar = nullptr;
-	UPROPERTY(EditAnywhere) AActor* RoomActor = nullptr;
 	UPROPERTY(EditAnywhere) ATriggerBox* TriggerVolume = nullptr;
 	UPROPERTY(EditAnywhere) float UnitsToLower = 30.f;
 	UPROPERTY(EditAnywhere) float Speed = 2.f;
-	FVector InitialPos, CurrentPos, TargetPos;
+	FVector InitialPos, CurrentPos, TargetPos, InitialPosActorOnPillar;
+	FRotator InitialRotActorOnPillar;
 	void SetupPositions();
 	void VerifyPointers();
 	void ActivatePillar();

@@ -15,7 +15,6 @@ UPillar::UPillar()
 void UPillar::BeginPlay()
 {
 	Super::BeginPlay();
-	if (RoomActor) RoomComponent = RoomActor->FindComponentByClass<URoom>();
 	VerifyPointers();
 	SetupPositions();
 }
@@ -27,6 +26,8 @@ void UPillar::SetupPositions()
 	CurrentPos = InitialPos;
 	TargetPos = InitialPos;
 	TargetPos.Z = InitialPos.Z - UnitsToLower;
+	InitialPosActorOnPillar = ActorOnPillar->GetActorLocation();
+	InitialRotActorOnPillar = ActorOnPillar->GetActorRotation();
 
 	UE_LOG(LogTemp, Warning, TEXT("Current: %s"), *CurrentPos.ToString());
 	UE_LOG(LogTemp, Warning, TEXT("Target: %s"), *TargetPos.ToString());
@@ -34,14 +35,6 @@ void UPillar::SetupPositions()
 
 void UPillar::VerifyPointers()
 {
-	if (NULLGUARD !RoomActor)
-	{
-		UE_LOG(LogTemp, Error, TEXT("Actor %s is missing a 'RoomActor'."), *(GetOwner()->GetName()));
-	}
-	if (NULLGUARD !RoomComponent)
-	{
-		UE_LOG(LogTemp, Error, TEXT("Actor %s is missing it's 'RoomActor's component 'Room'."), *(GetOwner()->GetName()));
-	}
 	if (NULLGUARD !ActorOnPillar)
 	{
 		UE_LOG(LogTemp, Error, TEXT("Actor %s is missing a 'ActorOnPillar'"), *(GetOwner()->GetName()));
@@ -55,6 +48,7 @@ void UPillar::VerifyPointers()
 void UPillar::ActivatePillar()
 {
 	Activated = true;
+	InProgress = true;
 }
 
 void UPillar::Progress(float DeltaTime)
@@ -65,7 +59,7 @@ void UPillar::Progress(float DeltaTime)
 	GetOwner()->SetActorLocation(ToMove);
 	if (FMath::IsNearlyEqual(ToMove.Z, TargetPos.Z, 1.f))
 	{
-		Activated = false;
+		InProgress = false;
 		UE_LOG(LogTemp, Display, TEXT("Pillar done!"));
 	}
 }
@@ -74,6 +68,9 @@ void UPillar::Reset()
 {
 	GetOwner()->SetActorLocation(InitialPos);
 	Activated = false;
+	if (NULLGUARD !ActorOnPillar) return;
+	ActorOnPillar->SetActorLocation(InitialPosActorOnPillar);
+	ActorOnPillar->SetActorRotation(InitialRotActorOnPillar);
 }
 
 // Called every frame
@@ -81,6 +78,6 @@ void UPillar::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponen
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 	if (TriggerVolume->IsOverlappingActor(ActorOnPillar) == false && Activated == false) ActivatePillar();
-	if (Activated) Progress(DeltaTime);
+	if (Activated && InProgress) Progress(DeltaTime);
 }
 
