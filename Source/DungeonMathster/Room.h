@@ -6,6 +6,7 @@
 #include "Components/ActorComponent.h"
 #include "Engine/TriggerBox.h"
 #include "Door.h"
+#include "Pillar.h"
 #include "Room.generated.h"
 
 
@@ -27,8 +28,12 @@ private:
 	void SetupDoor();
 	void SetupPlayer();
 	void VerifyTriggerVolume();
+	void SetupPillars();
+	bool IsCorrectPillarActivated();
+	UPROPERTY(EditAnywhere) TArray<AActor*> PillarActors;
 	UPROPERTY(EditAnywhere) ATriggerBox* TriggerVolume = nullptr;
 	UPROPERTY(EditAnywhere) AActor* DoorActor = nullptr;
+	TArray<UPillar*> PillarComponents;
 	UDoor* DoorComponent = nullptr;
 	AActor* Player = nullptr;
 };

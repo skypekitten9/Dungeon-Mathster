@@ -19,6 +19,7 @@ void URoom::BeginPlay()
 	SetupPlayer();
 	SetupDoor();
 	VerifyTriggerVolume();
+	SetupPillars();
 }
 
 #pragma region Setup
@@ -52,6 +53,32 @@ void URoom::VerifyTriggerVolume()
 		UE_LOG(LogTemp, Error, TEXT("Actor %s is missing a 'TriggerVolume'."), *(GetOwner()->GetName()));
 	}
 }
+
+void URoom::SetupPillars()
+{
+	if (PillarActors.Num() <= 0) UE_LOG(LogTemp, Error, TEXT("Room 's%' needs atleast 1 pillar attatched."), *(GetOwner()->GetName()));
+	for (int32 i = 0; i < PillarActors.Num(); i++)
+	{
+		if (NULLGUARD PillarActors[i] == false)
+		{
+			UE_LOG(LogTemp, Error, TEXT("Room '%s' has a null pillar."), *(GetOwner()->GetName()));
+		}
+		else
+		{
+			PillarComponents.Add(PillarActors[i]->FindComponentByClass<UPillar>());
+		}
+	}
+}
+
+bool URoom::IsCorrectPillarActivated()
+{
+	for (int32 i = 0; i < PillarComponents.Num(); i++)
+	{
+		if (PillarComponents[i] && PillarComponents[i]->IsPillarActivated()) return true;
+	}
+	return false;
+}
+
 #pragma endregion Setup
 
 // Called every frame
@@ -60,7 +87,7 @@ void URoom::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentT
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 	if (TriggerVolume && TriggerVolume->IsOverlappingActor(Player))
 	{
-		if (DoorComponent && DoorComponent->IsOpen() == false)
+		if (DoorComponent && DoorComponent->IsOpen() == false && IsCorrectPillarActivated())
 		{
 			DoorComponent->Open();
 		}
