@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
-#include "Room.h"
+#include "Engine/TriggerBox.h"
 #include "Pillar.generated.h"
 
 
@@ -16,6 +16,7 @@ class DUNGEONMATHSTER_API UPillar : public UActorComponent
 public:	
 	float Answer = 0.f;
 	UPillar();
+	bool IsPillarActivated();
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
 protected:
@@ -23,7 +24,6 @@ protected:
 	virtual void BeginPlay() override;
 
 private:
-	URoom* RoomComponent = nullptr;
 	bool Activated = false;
 	bool InProgress = false;
 	UPROPERTY(EditAnywhere) AActor* ActorOnPillar = nullptr;

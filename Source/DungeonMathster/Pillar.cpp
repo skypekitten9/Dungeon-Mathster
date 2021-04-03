@@ -11,6 +11,11 @@ UPillar::UPillar()
 }
 
 
+bool UPillar::IsPillarActivated()
+{
+	return Activated;
+}
+
 // Called when the game starts
 void UPillar::BeginPlay()
 {
@@ -66,6 +71,7 @@ void UPillar::Progress(float DeltaTime)
 
 void UPillar::Reset()
 {
+	//Resets
 	GetOwner()->SetActorLocation(InitialPos);
 	Activated = false;
 	if (NULLGUARD !ActorOnPillar) return;
