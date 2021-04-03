@@ -74,7 +74,7 @@ bool URoom::IsCorrectPillarActivated()
 {
 	for (int32 i = 0; i < PillarComponents.Num(); i++)
 	{
-		if (PillarComponents[i] && PillarComponents[i]->IsPillarActivated()) return true;
+		if (PillarComponents[i] && PillarComponents[i]->IsPillarActivated() && PillarComponents[i]->Answer == CorrectAnswer) return true;
 	}
 	return false;
 }

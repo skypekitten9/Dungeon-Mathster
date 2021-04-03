@@ -33,6 +33,7 @@ private:
 	UPROPERTY(EditAnywhere) TArray<AActor*> PillarActors;
 	UPROPERTY(EditAnywhere) ATriggerBox* TriggerVolume = nullptr;
 	UPROPERTY(EditAnywhere) AActor* DoorActor = nullptr;
+	int CorrectAnswer = 0;
 	TArray<UPillar*> PillarComponents;
 	UDoor* DoorComponent = nullptr;
 	AActor* Player = nullptr;
