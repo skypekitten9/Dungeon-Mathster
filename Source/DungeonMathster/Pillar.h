@@ -14,7 +14,7 @@ class DUNGEONMATHSTER_API UPillar : public UActorComponent
 	GENERATED_BODY()
 
 public:	
-	UPROPERTY(EditAnywhere) int Answer = 1; //CHANGE TO NON-UPROPERTY
+	int32 Answer = 1;
 	UPillar();
 	bool IsPillarActivated();
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;

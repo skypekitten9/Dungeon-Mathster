@@ -27,13 +27,14 @@ protected:
 private:
 	void SetupDoor();
 	void SetupPlayer();
+	void SetupAnswers();
 	void VerifyTriggerVolume();
 	void SetupPillars();
 	bool IsCorrectPillarActivated();
 	UPROPERTY(EditAnywhere) TArray<AActor*> PillarActors;
 	UPROPERTY(EditAnywhere) ATriggerBox* TriggerVolume = nullptr;
 	UPROPERTY(EditAnywhere) AActor* DoorActor = nullptr;
-	int CorrectAnswer = 0;
+	int32 CorrectAnswer = 0;
 	TArray<UPillar*> PillarComponents;
 	UDoor* DoorComponent = nullptr;
 	AActor* Player = nullptr;

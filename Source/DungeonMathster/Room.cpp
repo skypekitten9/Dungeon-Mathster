@@ -20,6 +20,7 @@ void URoom::BeginPlay()
 	SetupDoor();
 	VerifyTriggerVolume();
 	SetupPillars();
+	SetupAnswers();
 }
 
 #pragma region Setup
@@ -43,6 +44,19 @@ void URoom::SetupPlayer()
 	if (NULLGUARD !Player)
 	{
 		UE_LOG(LogTemp, Error, TEXT("Actor %s is missing a 'Player'."), *(GetOwner()->GetName()));
+	}
+}
+
+void URoom::SetupAnswers()
+{
+	int32 CorrectPillarIndex = FMath::RandRange(0, PillarComponents.Num()-1);
+	PillarComponents[CorrectPillarIndex]->Answer = CorrectAnswer;
+	UE_LOG(LogTemp, Warning, TEXT("Pillar has answer %s"), *(FString::FromInt(CorrectPillarIndex)));
+
+	for (int32 i = 0; i < PillarComponents.Num(); i++)
+	{
+		if (i == CorrectPillarIndex) continue;
+		PillarComponents[i]->Answer = CorrectAnswer + 1;
 	}
 }
 
