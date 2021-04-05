@@ -11,6 +11,17 @@ UPillar::UPillar()
 }
 
 
+void UPillar::SetAnswer(int32 AnswerToSet, bool IsCorrect)
+{
+	Answer = AnswerToSet;
+	CallGhostOnActivation = !IsCorrect;
+}
+
+int32 UPillar::GetAnswer()
+{
+	return Answer;
+}
+
 bool UPillar::IsPillarActivated()
 {
 	return Activated;
@@ -20,6 +31,7 @@ bool UPillar::IsPillarActivated()
 void UPillar::BeginPlay()
 {
 	Super::BeginPlay();
+	TextComponent = GetOwner()->FindComponentByClass<UTextRenderComponent>();
 	VerifyPointers();
 	SetupPositions();
 }
@@ -33,9 +45,6 @@ void UPillar::SetupPositions()
 	TargetPos.Z = InitialPos.Z - UnitsToLower;
 	InitialPosActorOnPillar = ActorOnPillar->GetActorLocation();
 	InitialRotActorOnPillar = ActorOnPillar->GetActorRotation();
-
-	UE_LOG(LogTemp, Warning, TEXT("Current: %s"), *CurrentPos.ToString());
-	UE_LOG(LogTemp, Warning, TEXT("Target: %s"), *TargetPos.ToString());
 }
 
 void UPillar::VerifyPointers()
@@ -47,6 +56,10 @@ void UPillar::VerifyPointers()
 	if (NULLGUARD !TriggerVolume)
 	{
 		UE_LOG(LogTemp, Error, TEXT("Actor %s is missing a 'TriggerVolume'"), *(GetOwner()->GetName()));
+	}
+	if (NULLGUARD !TextComponent)
+	{
+		UE_LOG(LogTemp, Error, TEXT("Actor %s is missing a 'TextComponent'"), *(GetOwner()->GetName()));
 	}
 }
 
@@ -82,6 +95,7 @@ void UPillar::Reset()
 // Called every frame
 void UPillar::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
+	if (NULLGUARD TextComponent) TextComponent->SetText(FText::AsNumber(Answer));
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 	if (TriggerVolume->IsOverlappingActor(ActorOnPillar) == false && Activated == false) ActivatePillar();
 	if (Activated && InProgress) Progress(DeltaTime);

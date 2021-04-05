@@ -20,7 +20,6 @@ void URoom::BeginPlay()
 	SetupDoor();
 	VerifyTriggerVolume();
 	SetupPillars();
-	SetupAnswers();
 }
 
 #pragma region Setup
@@ -50,13 +49,13 @@ void URoom::SetupPlayer()
 void URoom::SetupAnswers()
 {
 	int32 CorrectPillarIndex = FMath::RandRange(0, PillarComponents.Num()-1);
-	PillarComponents[CorrectPillarIndex]->Answer = CorrectAnswer;
-	UE_LOG(LogTemp, Warning, TEXT("Pillar has answer %s"), *(FString::FromInt(CorrectPillarIndex)));
+	PillarComponents[CorrectPillarIndex]->SetAnswer(CorrectAnswer, true);
+	//UE_LOG(LogTemp, Warning, TEXT("Pillar has answer %s"), *(FString::FromInt(CorrectPillarIndex)));
 
 	for (int32 i = 0; i < PillarComponents.Num(); i++)
 	{
 		if (i == CorrectPillarIndex) continue;
-		PillarComponents[i]->Answer = CorrectAnswer + 1;
+		PillarComponents[i]->SetAnswer(13, false);
 	}
 }
 
@@ -88,7 +87,7 @@ bool URoom::IsCorrectPillarActivated()
 {
 	for (int32 i = 0; i < PillarComponents.Num(); i++)
 	{
-		if (PillarComponents[i] && PillarComponents[i]->IsPillarActivated() && PillarComponents[i]->Answer == CorrectAnswer) return true;
+		if (PillarComponents[i] && PillarComponents[i]->IsPillarActivated() && PillarComponents[i]->GetAnswer() == CorrectAnswer) return true;
 	}
 	return false;
 }

@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
 #include "Engine/TriggerBox.h"
+#include "Components/TextRenderComponent.h"
 #include "Pillar.generated.h"
 
 
@@ -14,8 +15,9 @@ class DUNGEONMATHSTER_API UPillar : public UActorComponent
 	GENERATED_BODY()
 
 public:	
-	int32 Answer = 1;
 	UPillar();
+	void SetAnswer(int32 AnswerToSet, bool IsCorrect);
+	int32 GetAnswer();
 	bool IsPillarActivated();
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
@@ -24,12 +26,15 @@ protected:
 	virtual void BeginPlay() override;
 
 private:
+	int32 Answer = 1;
+	bool CallGhostOnActivation = true;
 	bool Activated = false;
 	bool InProgress = false;
 	UPROPERTY(EditAnywhere) AActor* ActorOnPillar = nullptr;
 	UPROPERTY(EditAnywhere) ATriggerBox* TriggerVolume = nullptr;
 	UPROPERTY(EditAnywhere) float UnitsToLower = 30.f;
 	UPROPERTY(EditAnywhere) float Speed = 2.f;
+	UTextRenderComponent* TextComponent = nullptr;
 	FVector InitialPos, CurrentPos, TargetPos, InitialPosActorOnPillar;
 	FRotator InitialRotActorOnPillar;
 	void SetupPositions();
