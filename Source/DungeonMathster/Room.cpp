@@ -20,6 +20,9 @@ void URoom::BeginPlay()
 	SetupDoor();
 	VerifyTriggerVolume();
 	SetupPillars();
+	SetupAnswers();
+	Question test = Questions::QuestionArray[1];
+	UE_LOG(LogTemp, Warning, TEXT("%s"), *(test.CorrectAnswer));
 }
 
 #pragma region Setup

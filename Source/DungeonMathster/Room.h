@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "Questions.h"
 #include "Components/ActorComponent.h"
 #include "Engine/TriggerBox.h"
 #include "Door.h"
