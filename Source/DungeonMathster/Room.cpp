@@ -75,7 +75,7 @@ void URoom::SetupPillars()
 	if (PillarActors.Num() <= 0) UE_LOG(LogTemp, Error, TEXT("Room 's%' needs atleast 1 pillar attatched."), *(GetOwner()->GetName()));
 	for (int32 i = 0; i < PillarActors.Num(); i++)
 	{
-		if (NULLGUARD PillarActors[i] == false)
+		if (NULLGUARD !PillarActors[i])
 		{
 			UE_LOG(LogTemp, Error, TEXT("Room '%s' has a null pillar."), *(GetOwner()->GetName()));
 		}
