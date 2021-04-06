@@ -20,9 +20,9 @@ void URoom::BeginPlay()
 	SetupDoor();
 	VerifyTriggerVolume();
 	SetupPillars();
+	SetupTextComponent();
+
 	SetupAnswers();
-	Question test = Questions::QuestionArray[1];
-	UE_LOG(LogTemp, Warning, TEXT("%s"), *(test.CorrectAnswer));
 }
 
 #pragma region Setup
@@ -51,14 +51,25 @@ void URoom::SetupPlayer()
 
 void URoom::SetupAnswers()
 {
-	int32 CorrectPillarIndex = FMath::RandRange(0, PillarComponents.Num()-1);
-	PillarComponents[CorrectPillarIndex]->SetAnswer(CorrectAnswer, true);
-	//UE_LOG(LogTemp, Warning, TEXT("Pillar has answer %s"), *(FString::FromInt(CorrectPillarIndex)));
+	Question Quary = Questions::GetRandomQuestion();
+	CorrectAnswer = Quary.CorrectAnswer;
+	if (NULLGUARD TextComponent) TextComponent->SetText(FText::FromString(Quary.Query));
+	TArray<int32> IncorrectAnswers = { Quary.WrongAnswerA, Quary.WrongAnswerB };
 
+	int32 CorrectPillarIndex = FMath::RandRange(0, PillarComponents.Num()-1);
+	PillarComponents[CorrectPillarIndex]->SetAnswer(Quary.CorrectAnswer, true);
+
+	if (PillarActors.Num() > IncorrectAnswers.Num() + 1)
+	{
+		UE_LOG(LogTemp, Error, TEXT("%s has too many pillars attached."), *(GetOwner()->GetName()));
+		return;
+	}
+	int32 j = 0;
 	for (int32 i = 0; i < PillarComponents.Num(); i++)
 	{
 		if (i == CorrectPillarIndex) continue;
-		PillarComponents[i]->SetAnswer(13, false);
+		PillarComponents[i]->SetAnswer(IncorrectAnswers[j], false);
+		j++;
 	}
 }
 
@@ -83,6 +94,15 @@ void URoom::SetupPillars()
 		{
 			PillarComponents.Add(PillarActors[i]->FindComponentByClass<UPillar>());
 		}
+	}
+}
+
+void URoom::SetupTextComponent()
+{
+	TextComponent = GetOwner()->FindComponentByClass<UTextRenderComponent>();
+	if (NULLGUARD !TextComponent)
+	{
+		UE_LOG(LogTemp, Error, TEXT("Actor %s is missing a 'TextComponent'"), *(GetOwner()->GetName()));
 	}
 }
 

@@ -8,6 +8,7 @@
 #include "Engine/TriggerBox.h"
 #include "Door.h"
 #include "Pillar.h"
+#include "Components/TextRenderComponent.h"
 #include "Room.generated.h"
 
 
@@ -31,10 +32,12 @@ private:
 	void SetupAnswers();
 	void VerifyTriggerVolume();
 	void SetupPillars();
+	void SetupTextComponent();
 	bool IsCorrectPillarActivated();
 	UPROPERTY(EditAnywhere) TArray<AActor*> PillarActors;
 	UPROPERTY(EditAnywhere) ATriggerBox* TriggerVolume = nullptr;
 	UPROPERTY(EditAnywhere) AActor* DoorActor = nullptr;
+	UTextRenderComponent* TextComponent = nullptr;
 	int32 CorrectAnswer = 0;
 	TArray<UPillar*> PillarComponents;
 	UDoor* DoorComponent = nullptr;
