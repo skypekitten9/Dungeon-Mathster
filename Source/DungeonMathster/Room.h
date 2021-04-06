@@ -20,6 +20,7 @@ class DUNGEONMATHSTER_API URoom : public UActorComponent
 public:	
 	// Sets default values for this component's properties
 	URoom();
+	void Reset();
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
 protected:
@@ -37,9 +38,12 @@ private:
 	UPROPERTY(EditAnywhere) TArray<AActor*> PillarActors;
 	UPROPERTY(EditAnywhere) ATriggerBox* TriggerVolume = nullptr;
 	UPROPERTY(EditAnywhere) AActor* DoorActor = nullptr;
+	UPROPERTY(EditAnywhere) float TimeBeforeReset = 1.f;
 	UTextRenderComponent* TextComponent = nullptr;
 	FString CorrectAnswer = "";
 	TArray<UPillar*> PillarComponents;
 	UDoor* DoorComponent = nullptr;
 	AActor* Player = nullptr;
+	float ResetTimer = 0.f;
+	bool HasReset = true;
 };

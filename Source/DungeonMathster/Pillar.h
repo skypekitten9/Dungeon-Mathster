@@ -20,6 +20,7 @@ public:
 	FString GetAnswer();
 	bool IsPillarActivated();
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
+	void Reset();
 
 protected:
 	// Called when the game starts
@@ -40,7 +41,5 @@ private:
 	void SetupPositions();
 	void VerifyPointers();
 	void ActivatePillar();
-	void Progress(float DeltaTime);
-	void Reset();
-		
+	void Progress(float DeltaTime);		
 };

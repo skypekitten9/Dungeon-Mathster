@@ -12,6 +12,16 @@ URoom::URoom()
 }
 
 
+void URoom::Reset()
+{
+	HasReset = true;
+	SetupAnswers();
+	for (UPillar* p : PillarComponents)
+	{
+		if(NULLGUARD p) p->Reset();
+	}
+}
+
 // Called when the game starts
 void URoom::BeginPlay()
 {
@@ -123,6 +133,8 @@ void URoom::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentT
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 	if (TriggerVolume && TriggerVolume->IsOverlappingActor(Player))
 	{
+		ResetTimer = TimeBeforeReset;
+		HasReset = false;
 		if (DoorComponent && DoorComponent->IsOpen() == false && IsCorrectPillarActivated())
 		{
 			DoorComponent->Open();
@@ -130,6 +142,8 @@ void URoom::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentT
 	}
 	else
 	{
+		ResetTimer -= DeltaTime;
+		if (ResetTimer <= 0.f && HasReset == false) Reset();
 		if (DoorComponent && DoorComponent->IsOpen() == true)
 		{
 			DoorComponent->Close();
