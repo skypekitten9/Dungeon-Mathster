@@ -54,7 +54,7 @@ void URoom::SetupAnswers()
 	Question Quary = Questions::GetRandomQuestion();
 	CorrectAnswer = Quary.CorrectAnswer;
 	if (NULLGUARD TextComponent) TextComponent->SetText(FText::FromString(Quary.Query));
-	TArray<int32> IncorrectAnswers = { Quary.WrongAnswerA, Quary.WrongAnswerB };
+	TArray<FString> IncorrectAnswers = { Quary.WrongAnswerA, Quary.WrongAnswerB };
 
 	int32 CorrectPillarIndex = FMath::RandRange(0, PillarComponents.Num()-1);
 	PillarComponents[CorrectPillarIndex]->SetAnswer(Quary.CorrectAnswer, true);
@@ -110,7 +110,7 @@ bool URoom::IsCorrectPillarActivated()
 {
 	for (int32 i = 0; i < PillarComponents.Num(); i++)
 	{
-		if (PillarComponents[i] && PillarComponents[i]->IsPillarActivated() && PillarComponents[i]->GetAnswer() == CorrectAnswer) return true;
+		if (PillarComponents[i] && PillarComponents[i]->IsPillarActivated() && CorrectAnswer.Equals(PillarComponents[i]->GetAnswer())) return true;
 	}
 	return false;
 }

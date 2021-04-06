@@ -10,9 +10,8 @@
 class Question
 {
 public:
-	FString Query;
-	int32 CorrectAnswer, WrongAnswerA, WrongAnswerB;
-	Question(FString Query, int32 CorrectAnswer, int32 WrongAnswerA, int32 WrongAnswerB) :
+	FString Query, CorrectAnswer, WrongAnswerA, WrongAnswerB;
+	Question(FString Query, FString CorrectAnswer, FString WrongAnswerA, FString WrongAnswerB) :
 		Query(Query),
 		CorrectAnswer(CorrectAnswer),
 		WrongAnswerA(WrongAnswerA),

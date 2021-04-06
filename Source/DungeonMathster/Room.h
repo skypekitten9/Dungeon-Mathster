@@ -38,7 +38,7 @@ private:
 	UPROPERTY(EditAnywhere) ATriggerBox* TriggerVolume = nullptr;
 	UPROPERTY(EditAnywhere) AActor* DoorActor = nullptr;
 	UTextRenderComponent* TextComponent = nullptr;
-	int32 CorrectAnswer = 0;
+	FString CorrectAnswer = "";
 	TArray<UPillar*> PillarComponents;
 	UDoor* DoorComponent = nullptr;
 	AActor* Player = nullptr;

@@ -16,8 +16,8 @@ class DUNGEONMATHSTER_API UPillar : public UActorComponent
 
 public:	
 	UPillar();
-	void SetAnswer(int32 AnswerToSet, bool IsCorrect);
-	int32 GetAnswer();
+	void SetAnswer(FString AnswerToSet, bool IsCorrect);
+	FString GetAnswer();
 	bool IsPillarActivated();
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
@@ -26,7 +26,7 @@ protected:
 	virtual void BeginPlay() override;
 
 private:
-	int32 Answer = 1;
+	FString Answer = "";
 	bool CallGhostOnActivation = true;
 	bool Activated = false;
 	bool InProgress = false;

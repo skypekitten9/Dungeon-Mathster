@@ -11,13 +11,14 @@ UPillar::UPillar()
 }
 
 
-void UPillar::SetAnswer(int32 AnswerToSet, bool IsCorrect)
+void UPillar::SetAnswer(FString AnswerToSet, bool IsCorrect)
 {
 	Answer = AnswerToSet;
 	CallGhostOnActivation = !IsCorrect;
+	if (NULLGUARD TextComponent) TextComponent->SetText(FText::FromString(Answer));
 }
 
-int32 UPillar::GetAnswer()
+FString UPillar::GetAnswer()
 {
 	return Answer;
 }
@@ -34,6 +35,7 @@ void UPillar::BeginPlay()
 	TextComponent = GetOwner()->FindComponentByClass<UTextRenderComponent>();
 	VerifyPointers();
 	SetupPositions();
+	if (NULLGUARD TextComponent) TextComponent->SetText(FText::FromString(Answer));
 }
 
 
@@ -95,7 +97,6 @@ void UPillar::Reset()
 // Called every frame
 void UPillar::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
-	if (NULLGUARD TextComponent) TextComponent->SetText(FText::AsNumber(Answer));
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 	if (TriggerVolume->IsOverlappingActor(ActorOnPillar) == false && Activated == false) ActivatePillar();
 	if (Activated && InProgress) Progress(DeltaTime);
