@@ -45,7 +45,6 @@ void UGraspComponent::Grasp()
 	FHitResult HitResult = GetActorWithinReach();
 	if (NULLGUARD HitResult.GetActor())
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Grasped something!"));
 		if(NULLGUARD PhysicsHandle) PhysicsHandle->GrabComponentAtLocationWithRotation(HitResult.GetComponent(), NAME_None, GetTargetPosition(), FRotator::ZeroRotator);
 		ActorRotationAtPickUp = GetOwner()->GetActorRotation();
 	}
@@ -53,7 +52,7 @@ void UGraspComponent::Grasp()
 
 void UGraspComponent::Release()
 {
-	UE_LOG(LogTemp, Warning, TEXT("Released!"));
+	if (NULLGUARD PhysicsHandle) PhysicsHandle->ReleaseComponent();
 }
 
 void UGraspComponent::Throw()
@@ -65,7 +64,6 @@ FRotator UGraspComponent::GetPhysicsRotatorOffset()
 {
 	FRotator Result = FRotator::ZeroRotator;
 	Result.Yaw = GetOwner()->GetActorRotation().Yaw - ActorRotationAtPickUp.Yaw;
-	//FRotator Result = UKismetMathLibrary::FindLookAtRotation(GetTargetPosition(), GetOwner()->GetActorLocation());
 	return Result;
 }
 
