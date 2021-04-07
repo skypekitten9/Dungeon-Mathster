@@ -22,6 +22,7 @@ protected:
 private:
 	void SetupPhysicsHandle();
 	void SetupInputComponent();
+	void SetupCameraManager();
 	void Grasp();
 	void Release();
 	void Throw();
@@ -33,5 +34,7 @@ private:
 	FRotator ActorRotationAtPickUp;
 	UInputComponent* InputComponent = nullptr;
 	UPhysicsHandleComponent* PhysicsHandle = nullptr;
+	APlayerCameraManager* CameraManager = nullptr;
 	UPROPERTY(EditAnywhere) float Reach = 100.f;
+	UPROPERTY(EditAnywhere) float ThrowForce = 100000.f;
 };
