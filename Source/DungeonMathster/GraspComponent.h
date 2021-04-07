@@ -25,10 +25,13 @@ private:
 	void Grasp();
 	void Release();
 	void Throw();
+	FRotator GetPhysicsRotatorOffset();
 	FHitResult GetActorWithinReach();
 	FVector GetTargetPosition();
 	FVector GetPlayerViewPos();
 
+	FRotator ActorRotationAtPickUp;
 	UInputComponent* InputComponent = nullptr;
 	UPhysicsHandleComponent* PhysicsHandle = nullptr;
+	UPROPERTY(EditAnywhere) float Reach = 100.f;
 };

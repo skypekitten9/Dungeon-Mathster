@@ -1,4 +1,6 @@
 #include "GraspComponent.h"
+#include "Kismet/KismetMathLibrary.h"
+#include "Engine/World.h"
 
 #define OUT
 #define NULLGUARD
@@ -40,7 +42,13 @@ void UGraspComponent::SetupInputComponent()
 
 void UGraspComponent::Grasp()
 {
-	UE_LOG(LogTemp, Warning, TEXT("Grasped something!"));
+	FHitResult HitResult = GetActorWithinReach();
+	if (NULLGUARD HitResult.GetActor())
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Grasped something!"));
+		if(NULLGUARD PhysicsHandle) PhysicsHandle->GrabComponentAtLocationWithRotation(HitResult.GetComponent(), NAME_None, GetTargetPosition(), FRotator::ZeroRotator);
+		ActorRotationAtPickUp = GetOwner()->GetActorRotation();
+	}
 }
 
 void UGraspComponent::Release()
@@ -53,8 +61,52 @@ void UGraspComponent::Throw()
 	UE_LOG(LogTemp, Warning, TEXT("Threw!"));
 }
 
+FRotator UGraspComponent::GetPhysicsRotatorOffset()
+{
+	FRotator Result = FRotator::ZeroRotator;
+	Result.Yaw = GetOwner()->GetActorRotation().Yaw - ActorRotationAtPickUp.Yaw;
+	//FRotator Result = UKismetMathLibrary::FindLookAtRotation(GetTargetPosition(), GetOwner()->GetActorLocation());
+	return Result;
+}
+
+FHitResult UGraspComponent::GetActorWithinReach()
+{
+	FHitResult HitResult;
+	GetWorld()->LineTraceSingleByObjectType(
+		OUT HitResult,
+		GetPlayerViewPos(),
+		GetTargetPosition(),
+		FCollisionObjectQueryParams(ECollisionChannel::ECC_PhysicsBody),
+		FCollisionQueryParams(TEXT(""), false, GetOwner())
+	);
+	return HitResult;
+}
+
+FVector UGraspComponent::GetTargetPosition()
+{
+	FVector PlayerViewPos;
+	FRotator PlayerViewRotator;
+	GetWorld()->GetFirstPlayerController()->GetPlayerViewPoint(
+		OUT PlayerViewPos,
+		OUT PlayerViewRotator
+	);
+	return PlayerViewPos + PlayerViewRotator.Vector() * Reach;
+}
+
+FVector UGraspComponent::GetPlayerViewPos()
+{
+	FVector result;
+	FRotator temp;
+	GetWorld()->GetFirstPlayerController()->GetPlayerViewPoint(
+		OUT result,
+		OUT temp
+	);
+	return result;
+}
+
 void UGraspComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
+	if (NULLGUARD PhysicsHandle) PhysicsHandle->SetTargetLocationAndRotation(GetTargetPosition(), GetPhysicsRotatorOffset());
 }
 
