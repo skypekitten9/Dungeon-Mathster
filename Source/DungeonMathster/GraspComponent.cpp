@@ -15,7 +15,6 @@ void UGraspComponent::BeginPlay()
 	Super::BeginPlay();
 	SetupPhysicsHandle();
 	SetupInputComponent();
-	SetupCameraManager();
 }
 
 void UGraspComponent::SetupPhysicsHandle()
@@ -40,16 +39,6 @@ void UGraspComponent::SetupInputComponent()
 	InputComponent->BindAction("Throw", IE_Pressed, this, &UGraspComponent::Throw);
 }
 
-void UGraspComponent::SetupCameraManager()
-{
-	CameraManager = GetWorld()->GetFirstPlayerController()->PlayerCameraManager;
-	if (NULLGUARD !CameraManager)
-	{
-		UE_LOG(LogTemp, Error, TEXT("Actor '%s' is missing a 'CameraManager'."));
-		return;
-	}
-}
-
 void UGraspComponent::Grasp()
 {
 	FHitResult HitResult = GetActorWithinReach();
@@ -67,9 +56,16 @@ void UGraspComponent::Release()
 
 void UGraspComponent::Throw()
 {
+	FVector PlayerViewPos;
+	FRotator PlayerViewRotator;
+	GetWorld()->GetFirstPlayerController()->GetPlayerViewPoint(
+		OUT PlayerViewPos,
+		OUT PlayerViewRotator
+	);
+
 	UPrimitiveComponent* PrimitiveToThrow = PhysicsHandle->GetGrabbedComponent();
 	if (NULLGUARD PhysicsHandle) PhysicsHandle->ReleaseComponent();
-	if (NULLGUARD PrimitiveToThrow && CameraManager) PrimitiveToThrow->AddForce(CameraManager->GetCameraRotation().Vector() * ThrowForce);
+	if (NULLGUARD PrimitiveToThrow) PrimitiveToThrow->AddForce(PlayerViewRotator.Vector() * ThrowForce);
 }
 
 FRotator UGraspComponent::GetPhysicsRotatorOffset()

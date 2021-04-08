@@ -46,4 +46,5 @@ private:
 	AActor* Player = nullptr;
 	float ResetTimer = 0.f;
 	bool HasReset = true;
+	bool PlayerPointRecieved = false;
 };

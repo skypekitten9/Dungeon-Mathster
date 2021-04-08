@@ -15,6 +15,7 @@ URoom::URoom()
 void URoom::Reset()
 {
 	HasReset = true;
+	PlayerPointRecieved = false;
 	SetupAnswers();
 	for (UPillar* p : PillarComponents)
 	{
@@ -133,6 +134,11 @@ void URoom::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentT
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 	if (TriggerVolume && TriggerVolume->IsOverlappingActor(Player))
 	{
+		if (PlayerPointRecieved == false)
+		{
+			UE_LOG(LogTemp, Warning, TEXT("Player recieved a point!"));
+			PlayerPointRecieved = true;
+		}
 		ResetTimer = TimeBeforeReset;
 		HasReset = false;
 		if (DoorComponent && DoorComponent->IsOpen() == false && IsCorrectPillarActivated())

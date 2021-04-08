@@ -3,6 +3,8 @@
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
 #include "Components/InputComponent.h"
+#include "GameFramework/PlayerController.h"
+#include "Components/PrimitiveComponent.h"
 #include "PhysicsEngine/PhysicsHandleComponent.h"
 #include "GraspComponent.generated.h"
 
@@ -22,7 +24,6 @@ protected:
 private:
 	void SetupPhysicsHandle();
 	void SetupInputComponent();
-	void SetupCameraManager();
 	void Grasp();
 	void Release();
 	void Throw();
@@ -35,9 +36,8 @@ private:
 	FRotator ActorRotationAtPickUp;
 	UInputComponent* InputComponent = nullptr;
 	UPhysicsHandleComponent* PhysicsHandle = nullptr;
-	APlayerCameraManager* CameraManager = nullptr;
 	float DistanceToGrabbedActor = 0.f;
-	UPROPERTY(EditAnywhere) float Reach = 100.f;
+	UPROPERTY(EditAnywhere) float Reach = 200.f;
 	UPROPERTY(EditAnywhere) float ArmLength = 75.f;
 	UPROPERTY(EditAnywhere) float ThrowForce = 100000.f;
 };
