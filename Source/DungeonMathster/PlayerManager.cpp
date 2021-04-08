@@ -1,4 +1,5 @@
 #include "PlayerManager.h"
+#include "Kismet/GameplayStatics.h"
 
 UPlayerManager::UPlayerManager()
 {
@@ -21,13 +22,21 @@ void UPlayerManager::TickComponent(float DeltaTime, ELevelTick TickType, FActorC
 
 void UPlayerManager::IncreaseScore()
 {
-	UE_LOG(LogTemp, Warning, TEXT("Player recieved a point! Score: %s"), *FString::FromInt(Score));
 	Score++;
 }
 
 void UPlayerManager::SaveScore()
 {
+	UHighscoreSave* SavedGame = Cast<UHighscoreSave>(UGameplayStatics::CreateSaveGameObject(UHighscoreSave::StaticClass()));
+	SavedGame->Score = Score;
+	UGameplayStatics::SaveGameToSlot(SavedGame, TEXT("MySlot"), 0);
+}
 
+void UPlayerManager::LoadScore()
+{
+	UHighscoreSave* LoadGame = Cast<UHighscoreSave>(UGameplayStatics::CreateSaveGameObject(UHighscoreSave::StaticClass()));
+	LoadGame = Cast<UHighscoreSave>(UGameplayStatics::LoadGameFromSlot("MySlot", 0));
+	Score = LoadGame->Score;
 }
 
 int32 UPlayerManager::GetScore()
