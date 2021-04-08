@@ -55,7 +55,7 @@ void UGraspComponent::Grasp()
 	FHitResult HitResult = GetActorWithinReach();
 	if (NULLGUARD HitResult.GetActor())
 	{
-		if(NULLGUARD PhysicsHandle) PhysicsHandle->GrabComponentAtLocationWithRotation(HitResult.GetComponent(), NAME_None, GetTargetPosition(), FRotator::ZeroRotator);
+		if(NULLGUARD PhysicsHandle) PhysicsHandle->GrabComponentAtLocationWithRotation(HitResult.GetComponent(), NAME_None, HitResult.GetActor()->GetActorLocation(), FRotator::ZeroRotator);
 		ActorRotationAtPickUp = GetOwner()->GetActorRotation();
 	}
 }
@@ -75,7 +75,7 @@ void UGraspComponent::Throw()
 FRotator UGraspComponent::GetPhysicsRotatorOffset()
 {
 	FRotator Result = FRotator::ZeroRotator;
-	Result.Yaw = GetOwner()->GetActorRotation().Yaw - ActorRotationAtPickUp.Yaw;
+	Result = GetOwner()->GetActorRotation() - ActorRotationAtPickUp;
 	return Result;
 }
 
@@ -90,6 +90,17 @@ FHitResult UGraspComponent::GetActorWithinReach()
 		FCollisionQueryParams(TEXT(""), false, GetOwner())
 	);
 	return HitResult;
+}
+
+FVector UGraspComponent::GetTargetPositionOnGrabbedActor()
+{
+	FVector PlayerViewPos;
+	FRotator PlayerViewRotator;
+	GetWorld()->GetFirstPlayerController()->GetPlayerViewPoint(
+		OUT PlayerViewPos,
+		OUT PlayerViewRotator
+	);
+	return PlayerViewPos + PlayerViewRotator.Vector() * ArmLength;
 }
 
 FVector UGraspComponent::GetTargetPosition()
@@ -117,6 +128,6 @@ FVector UGraspComponent::GetPlayerViewPos()
 void UGraspComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
-	if (NULLGUARD PhysicsHandle) PhysicsHandle->SetTargetLocationAndRotation(GetTargetPosition(), GetPhysicsRotatorOffset());
+	if (NULLGUARD PhysicsHandle) PhysicsHandle->SetTargetLocationAndRotation(GetTargetPositionOnGrabbedActor(), GetPhysicsRotatorOffset());
 }
 

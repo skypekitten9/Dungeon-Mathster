@@ -28,6 +28,7 @@ private:
 	void Throw();
 	FRotator GetPhysicsRotatorOffset();
 	FHitResult GetActorWithinReach();
+	FVector GetTargetPositionOnGrabbedActor();
 	FVector GetTargetPosition();
 	FVector GetPlayerViewPos();
 
@@ -35,6 +36,8 @@ private:
 	UInputComponent* InputComponent = nullptr;
 	UPhysicsHandleComponent* PhysicsHandle = nullptr;
 	APlayerCameraManager* CameraManager = nullptr;
+	float DistanceToGrabbedActor = 0.f;
 	UPROPERTY(EditAnywhere) float Reach = 100.f;
+	UPROPERTY(EditAnywhere) float ArmLength = 75.f;
 	UPROPERTY(EditAnywhere) float ThrowForce = 100000.f;
 };
