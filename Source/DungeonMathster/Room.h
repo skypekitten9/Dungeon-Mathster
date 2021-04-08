@@ -7,6 +7,7 @@
 #include "Components/ActorComponent.h"
 #include "Engine/TriggerBox.h"
 #include "Door.h"
+#include "PlayerManager.h"
 #include "Pillar.h"
 #include "Components/TextRenderComponent.h"
 #include "Room.generated.h"
@@ -44,6 +45,7 @@ private:
 	TArray<UPillar*> PillarComponents;
 	UDoor* DoorComponent = nullptr;
 	AActor* Player = nullptr;
+	UPlayerManager* PlayerManager = nullptr;
 	float ResetTimer = 0.f;
 	bool HasReset = true;
 	bool PlayerPointRecieved = false;

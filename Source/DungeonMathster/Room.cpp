@@ -57,6 +57,12 @@ void URoom::SetupPlayer()
 	if (NULLGUARD !Player)
 	{
 		UE_LOG(LogTemp, Error, TEXT("Actor %s is missing a 'Player'."), *(GetOwner()->GetName()));
+		return;
+	}
+	PlayerManager = Player->FindComponentByClass<UPlayerManager>();
+	if (NULLGUARD !PlayerManager)
+	{
+		UE_LOG(LogTemp, Error, TEXT("Actor %s is missing a 'PlayerManager'."), *(GetOwner()->GetName()));
 	}
 }
 
@@ -136,7 +142,7 @@ void URoom::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentT
 	{
 		if (PlayerPointRecieved == false)
 		{
-			UE_LOG(LogTemp, Warning, TEXT("Player recieved a point!"));
+			PlayerManager->IncreaseScore();
 			PlayerPointRecieved = true;
 		}
 		ResetTimer = TimeBeforeReset;
