@@ -33,6 +33,7 @@ void UPillar::BeginPlay()
 {
 	Super::BeginPlay();
 	TextComponent = GetOwner()->FindComponentByClass<UTextRenderComponent>();
+	PrimitiveComponent = ActorOnPillar->FindComponentByClass<UPrimitiveComponent>();
 	VerifyPointers();
 	SetupPositions();
 	if (NULLGUARD TextComponent) TextComponent->SetText(FText::FromString(Answer));
@@ -63,6 +64,10 @@ void UPillar::VerifyPointers()
 	{
 		UE_LOG(LogTemp, Error, TEXT("Actor %s is missing a 'TextComponent'"), *(GetOwner()->GetName()));
 	}
+	if (NULLGUARD !PrimitiveComponent)
+	{
+		UE_LOG(LogTemp, Error, TEXT("Actor %s is missing a 'PrimitiveComponent'"), *(GetOwner()->GetName()));
+	}
 }
 
 void UPillar::ActivatePillar()
@@ -92,6 +97,7 @@ void UPillar::Reset()
 	if (NULLGUARD !ActorOnPillar) return;
 	ActorOnPillar->SetActorLocation(InitialPosActorOnPillar);
 	ActorOnPillar->SetActorRotation(InitialRotActorOnPillar);
+	if (NULLGUARD PrimitiveComponent) PrimitiveComponent->SetPhysicsLinearVelocity(FVector::ZeroVector);
 }
 
 // Called every frame
