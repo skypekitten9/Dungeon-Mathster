@@ -13,6 +13,8 @@ void UStartRoom::BeginPlay()
 	SetupPlayer();
 	VerifyTriggerVolume();
 	SetupTextComponent();
+
+	LoadHighscore();
 }
 
 
@@ -57,8 +59,30 @@ void UStartRoom::SetupTextComponent()
 	}
 }
 
+void UStartRoom::LoadHighscore()
+{
+	UHighscoreSave* LoadGame = Cast<UHighscoreSave>(UGameplayStatics::CreateSaveGameObject(UHighscoreSave::StaticClass()));
+	LoadGame = Cast<UHighscoreSave>(UGameplayStatics::LoadGameFromSlot("MySlot", 0));
+	int32 Highscore = LoadGame->Score;
+	TextComponent->SetText(FText::AsNumber(Highscore));
+}
+
 void UStartRoom::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
+	if (TriggerVolume && TriggerVolume->IsOverlappingActor(Player))
+	{
+		if (DoorComponent && DoorComponent->IsOpen() == false)
+		{
+			DoorComponent->Open();
+		}
+	}
+	else
+	{
+		if (DoorComponent && DoorComponent->IsOpen())
+		{
+			DoorComponent->Close();
+		}
+	}
 }
 
