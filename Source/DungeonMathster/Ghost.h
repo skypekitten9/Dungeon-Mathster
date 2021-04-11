@@ -4,6 +4,9 @@
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
+#include "GameFramework/Pawn.h"
+#include "Camera/CameraComponent.h"
+#include "GameFramework/SpringArmComponent.h"
 #include "Ghost.generated.h"
 
 
@@ -28,7 +31,7 @@ private:
 	UPROPERTY(EditAnywhere) float InitialSpeed = 1.f;
 	UPROPERTY(EditAnywhere) float Reach = 250.f;
 	UPROPERTY(EditAnywhere) float EndGameTimer = 1.5f;
-	AActor* Player = nullptr;
+	APawn* Player = nullptr;
 	bool PlayerCaught = false;
 	FVector Target;
 	float Speed;

@@ -4,6 +4,7 @@
 #include "Kismet/GameplayStatics.h"
 #include "Math/UnrealMathUtility.h"
 
+
 #define NULLGUARD
 UGhost::UGhost()
 {
@@ -17,7 +18,6 @@ void UGhost::BeginPlay()
 	Super::BeginPlay();
 	SetupPlayer();
 	Speed = InitialSpeed;
-	
 }
 
 
@@ -53,6 +53,24 @@ void UGhost::ProgressEndingGame(float DeltaTime)
 {
 	EndGameTimer -= DeltaTime;
 	if(EndGameTimer <= 0) UGameplayStatics::OpenLevel(this, FName(*GetWorld()->GetName()), false);
+
+	//Get look towards rotation
+	FVector OffsetOwnerLocation = GetOwner()->GetActorLocation();
+	OffsetOwnerLocation.Z += 50;
+	FRotator TargetRotation = UKismetMathLibrary::FindLookAtRotation(Player->GetActorLocation(), OffsetOwnerLocation);
+	FRotator ToRotate;
+	FVector PlayerViewPos;
+	GetWorld()->GetFirstPlayerController()->GetPlayerViewPoint(
+		OUT PlayerViewPos,
+		OUT ToRotate
+	);
+
+	//Get difference and apply rotation
+	ToRotate.Yaw = UKismetMathLibrary::Abs(ToRotate.Yaw - FMath::FInterpTo(ToRotate.Yaw, TargetRotation.Yaw, DeltaTime, 2.f));
+	ToRotate.Pitch = UKismetMathLibrary::Abs(ToRotate.Pitch - FMath::FInterpTo(ToRotate.Pitch, TargetRotation.Pitch, DeltaTime, 2.f));
+	Player->AddControllerYawInput(ToRotate.Yaw);
+	Player->AddControllerPitchInput(ToRotate.Pitch);
+
 }
 
 // Called every frame
@@ -70,5 +88,6 @@ void UGhost::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponent
 		GoTowardsTarget(DeltaTime);
 	}
 	LookTowardsPlayer();
+
 }
 
