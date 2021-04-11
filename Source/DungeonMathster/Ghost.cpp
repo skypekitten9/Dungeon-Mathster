@@ -1,6 +1,7 @@
 #include "Ghost.h"
 #include "GameFramework/Actor.h"
 #include "Kismet/KismetMathLibrary.h"
+#include "Kismet/GameplayStatics.h"
 #include "Math/UnrealMathUtility.h"
 
 #define NULLGUARD
@@ -48,14 +49,26 @@ void UGhost::GoTowardsTarget(float DeltaTime)
 
 }
 
+void UGhost::ProgressEndingGame(float DeltaTime)
+{
+	EndGameTimer -= DeltaTime;
+	if(EndGameTimer <= 0) UGameplayStatics::OpenLevel(this, FName(*GetWorld()->GetName()), false);
+}
+
 // Called every frame
 void UGhost::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
-	
-
+	if (FVector::Distance(GetOwner()->GetActorLocation(), Player->GetActorLocation()) <= Reach)
+	{
+		PlayerCaught = true;
+	}
+	if (PlayerCaught) ProgressEndingGame(DeltaTime);
+	else
+	{
+		Target = Player->GetActorLocation();
+		GoTowardsTarget(DeltaTime);
+	}
 	LookTowardsPlayer();
-	Target = Player->GetActorLocation();
-	GoTowardsTarget(DeltaTime);
 }
 

@@ -24,8 +24,12 @@ private:
 	void SetupPlayer();
 	void LookTowardsPlayer();
 	void GoTowardsTarget(float DeltaTime);
+	void ProgressEndingGame(float DeltaTime);
 	UPROPERTY(EditAnywhere) float InitialSpeed = 1.f;
+	UPROPERTY(EditAnywhere) float Reach = 250.f;
+	UPROPERTY(EditAnywhere) float EndGameTimer = 1.5f;
 	AActor* Player = nullptr;
+	bool PlayerCaught = false;
 	FVector Target;
 	float Speed;
 };
