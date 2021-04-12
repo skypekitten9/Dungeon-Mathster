@@ -114,5 +114,6 @@ void UGhost::SetTarget(FVector NewTarget)
 void UGhost::IncreaseSpeedIncrement()
 {
 	SpeedIncrement++;
+	if(TargetPlayer) Speed = InitialSpeed + (SpeedIncrement * SpeedIncreasePerIncrement);
 }
 

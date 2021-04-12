@@ -5,6 +5,8 @@
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
 #include "Engine/TriggerBox.h"
+#include "Ghost.h"
+#include "Kismet/GameplayStatics.h"
 #include "Components/TextRenderComponent.h"
 #include "Components/PrimitiveComponent.h"
 #include "Pillar.generated.h"
@@ -36,11 +38,13 @@ private:
 	UPROPERTY(EditAnywhere) ATriggerBox* TriggerVolume = nullptr;
 	UPROPERTY(EditAnywhere) float UnitsToLower = 30.f;
 	UPROPERTY(EditAnywhere) float Speed = 2.f;
+	UGhost* Ghost = nullptr;
 	UPrimitiveComponent* PrimitiveComponent = nullptr;
 	UTextRenderComponent* TextComponent = nullptr;
 	FVector InitialPos, CurrentPos, TargetPos, InitialPosActorOnPillar;
 	FRotator InitialRotActorOnPillar;
 	void SetupPositions();
+	void SetupGhost();
 	void VerifyPointers();
 	void ActivatePillar();
 	void Progress(float DeltaTime);		

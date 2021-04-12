@@ -36,6 +36,7 @@ void UPillar::BeginPlay()
 	PrimitiveComponent = ActorOnPillar->FindComponentByClass<UPrimitiveComponent>();
 	VerifyPointers();
 	SetupPositions();
+	SetupGhost();
 	if (NULLGUARD TextComponent) TextComponent->SetText(FText::FromString(Answer));
 }
 
@@ -48,6 +49,29 @@ void UPillar::SetupPositions()
 	TargetPos.Z = InitialPos.Z - UnitsToLower;
 	InitialPosActorOnPillar = ActorOnPillar->GetActorLocation();
 	InitialRotActorOnPillar = ActorOnPillar->GetActorRotation();
+}
+
+void UPillar::SetupGhost()
+{
+	TArray<AActor*> TempArrayOfGhost;
+	FName Tag = TEXT("Ghost");
+	UGameplayStatics::GetAllActorsWithTag(GetWorld(), Tag, TempArrayOfGhost);
+	if (TempArrayOfGhost.Num() > 1)
+	{
+		UE_LOG(LogTemp, Error, TEXT("Actor %s detected more then 1 'Ghost' in the map."), *(GetOwner()->GetName()));
+		return;
+	}
+	if (TempArrayOfGhost.Num() < 1)
+	{
+		UE_LOG(LogTemp, Error, TEXT("Actor %s detected no 'Ghost' in map."), *(GetOwner()->GetName()));
+		return;
+	}
+	Ghost = TempArrayOfGhost[0]->FindComponentByClass<UGhost>();
+	if (NULLGUARD !Ghost)
+	{
+		UE_LOG(LogTemp, Error, TEXT("Actor %s is missing a refferense to 'Ghost'."), *(GetOwner()->GetName()));
+		return;
+	}
 }
 
 void UPillar::VerifyPointers()
@@ -72,6 +96,7 @@ void UPillar::VerifyPointers()
 
 void UPillar::ActivatePillar()
 {
+	if (NULLGUARD Ghost && CallGhostOnActivation) Ghost->IncreaseSpeedIncrement();
 	Activated = true;
 	InProgress = true;
 }
