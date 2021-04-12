@@ -65,9 +65,12 @@ void UGhost::ProgressEndingGame(float DeltaTime)
 		OUT ToRotate
 	);
 
+	UE_LOG(LogTemp, Warning, TEXT("Current yaw: %f Target yaw: %f"), ToRotate.Yaw, TargetRotation.Yaw);
+	UE_LOG(LogTemp, Warning, TEXT("Current pitch: %f Target pitch: %f"), ToRotate.Pitch, TargetRotation.Pitch);
+
 	//Get difference and apply rotation
-	ToRotate.Yaw = UKismetMathLibrary::Abs(ToRotate.Yaw - FMath::FInterpTo(ToRotate.Yaw, TargetRotation.Yaw, DeltaTime, 2.f));
-	ToRotate.Pitch = UKismetMathLibrary::Abs(ToRotate.Pitch - FMath::FInterpTo(ToRotate.Pitch, TargetRotation.Pitch, DeltaTime, 2.f));
+	ToRotate.Yaw = FMath::FInterpTo(ToRotate.Yaw, TargetRotation.Yaw, DeltaTime, 2.f) - ToRotate.Yaw;
+	ToRotate.Pitch = ToRotate.Pitch - FMath::FInterpTo(ToRotate.Pitch, TargetRotation.Pitch, DeltaTime, 2.f);
 	Player->AddControllerYawInput(ToRotate.Yaw);
 	Player->AddControllerPitchInput(ToRotate.Pitch);
 
