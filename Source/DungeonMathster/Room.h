@@ -6,6 +6,9 @@
 #include "Questions.h"
 #include "Components/ActorComponent.h"
 #include "Engine/TriggerBox.h"
+#include "Kismet/GameplayStatics.h"
+#include "UObject/NameTypes.h"
+#include "Ghost.h"
 #include "Door.h"
 #include "PlayerManager.h"
 #include "Pillar.h"
@@ -32,6 +35,7 @@ private:
 	void SetupDoor();
 	void SetupPlayer();
 	void SetupAnswers();
+	void SetupGhost();
 	void VerifyTriggerVolume();
 	void SetupPillars();
 	void SetupTextComponent();
@@ -40,6 +44,7 @@ private:
 	UPROPERTY(EditAnywhere) ATriggerBox* TriggerVolume = nullptr;
 	UPROPERTY(EditAnywhere) AActor* DoorActor = nullptr;
 	UPROPERTY(EditAnywhere) float TimeBeforeReset = 1.f;
+	UGhost* Ghost = nullptr;
 	UTextRenderComponent* TextComponent = nullptr;
 	FString CorrectAnswer = "";
 	TArray<UPillar*> PillarComponents;

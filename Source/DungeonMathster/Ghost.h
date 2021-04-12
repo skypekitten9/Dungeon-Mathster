@@ -19,6 +19,7 @@ public:
 	UGhost();
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 	void SetTarget(FVector NewTarget);
+	void IncreaseSpeedIncrement();
 
 protected:
 	virtual void BeginPlay() override;
@@ -28,11 +29,18 @@ private:
 	void LookTowardsPlayer();
 	void GoTowardsTarget(float DeltaTime);
 	void ProgressEndingGame(float DeltaTime);
-	UPROPERTY(EditAnywhere) float InitialSpeed = 1.f;
+	void VerifyTarget();
+	UPROPERTY(EditAnywhere) float InitialSpeed = 20.f;
+	UPROPERTY(EditAnywhere) float MaxSpeed = 250.f;
+	UPROPERTY(EditAnywhere) float TargetRoomSpeed = 300.f;
+	UPROPERTY(EditAnywhere) float SpeedIncreasePerIncrement = 10.f;
 	UPROPERTY(EditAnywhere) float Reach = 250.f;
 	UPROPERTY(EditAnywhere) float EndGameTimer = 1.5f;
 	APawn* Player = nullptr;
 	bool PlayerCaught = false;
+	bool TargetingActive = false;
+	bool TargetPlayer = false;
 	FVector Target;
 	float Speed;
+	int SpeedIncrement = 0;
 };

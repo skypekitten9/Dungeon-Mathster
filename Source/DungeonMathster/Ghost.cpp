@@ -46,6 +46,7 @@ void UGhost::GoTowardsTarget(float DeltaTime)
 	ToMove.X = FMath::FInterpConstantTo(ToMove.X, Target.X, DeltaTime, Speed);
 	ToMove.Y = FMath::FInterpConstantTo(ToMove.Y, Target.Y, DeltaTime, Speed);
 	GetOwner()->SetActorLocation(ToMove);
+	UE_LOG(LogTemp, Warning, TEXT("Speed: %f"), Speed);
 
 }
 
@@ -65,15 +66,23 @@ void UGhost::ProgressEndingGame(float DeltaTime)
 		OUT ToRotate
 	);
 
-	UE_LOG(LogTemp, Warning, TEXT("Current yaw: %f Target yaw: %f"), ToRotate.Yaw, TargetRotation.Yaw);
-	UE_LOG(LogTemp, Warning, TEXT("Current pitch: %f Target pitch: %f"), ToRotate.Pitch, TargetRotation.Pitch);
-
 	//Get difference and apply rotation
 	ToRotate.Yaw = FMath::FInterpTo(ToRotate.Yaw, TargetRotation.Yaw, DeltaTime, 2.f) - ToRotate.Yaw;
 	ToRotate.Pitch = ToRotate.Pitch - FMath::FInterpTo(ToRotate.Pitch, TargetRotation.Pitch, DeltaTime, 2.f);
 	Player->AddControllerYawInput(ToRotate.Yaw);
 	Player->AddControllerPitchInput(ToRotate.Pitch);
 
+}
+
+void UGhost::VerifyTarget()
+{
+	if (FMath::IsNearlyEqual(GetOwner()->GetTargetLocation().X, Target.X, 10.f) && FMath::IsNearlyEqual(GetOwner()->GetTargetLocation().Y, Target.Y, 10.f))
+	{
+		TargetPlayer = true;
+		Speed = InitialSpeed + (SpeedIncrement * SpeedIncreasePerIncrement);
+		if (Speed > MaxSpeed) Speed = MaxSpeed;
+	}
+	if(TargetPlayer) Target = Player->GetActorLocation();
 }
 
 // Called every frame
@@ -87,10 +96,23 @@ void UGhost::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponent
 	if (PlayerCaught) ProgressEndingGame(DeltaTime);
 	else
 	{
-		Target = Player->GetActorLocation();
-		GoTowardsTarget(DeltaTime);
+		VerifyTarget();
+		if(TargetingActive) GoTowardsTarget(DeltaTime);
 	}
 	LookTowardsPlayer();
 
+}
+
+void UGhost::SetTarget(FVector NewTarget)
+{
+	TargetingActive = true;
+	Target = NewTarget;
+	Speed = TargetRoomSpeed;
+	TargetPlayer = false;
+}
+
+void UGhost::IncreaseSpeedIncrement()
+{
+	SpeedIncrement++;
 }
 

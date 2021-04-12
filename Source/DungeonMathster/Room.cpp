@@ -32,6 +32,7 @@ void URoom::BeginPlay()
 	VerifyTriggerVolume();
 	SetupPillars();
 	SetupTextComponent();
+	SetupGhost();
 
 	SetupAnswers();
 }
@@ -90,6 +91,29 @@ void URoom::SetupAnswers()
 	}
 }
 
+void URoom::SetupGhost()
+{
+	TArray<AActor*> TempArrayOfGhost;
+	FName Tag = TEXT("Ghost");
+	UGameplayStatics::GetAllActorsWithTag(GetWorld(), Tag, TempArrayOfGhost);
+	if (TempArrayOfGhost.Num() > 1)
+	{
+		UE_LOG(LogTemp, Error, TEXT("Actor %s detected more then 1 'Ghost' in the map."), *(GetOwner()->GetName()));
+		return;
+	}
+	if (TempArrayOfGhost.Num() < 1)
+	{
+		UE_LOG(LogTemp, Error, TEXT("Actor %s detected no 'Ghost' in map."), *(GetOwner()->GetName()));
+		return;
+	}
+	Ghost = TempArrayOfGhost[0]->FindComponentByClass<UGhost>();
+	if (NULLGUARD !Ghost)
+	{
+		UE_LOG(LogTemp, Error, TEXT("Actor %s is missing a refferense to 'Ghost'."), *(GetOwner()->GetName()));
+		return;
+	}
+}
+
 void URoom::VerifyTriggerVolume()
 {
 	if (NULLGUARD !TriggerVolume)
@@ -143,6 +167,11 @@ void URoom::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentT
 		if (PlayerPointRecieved == false)
 		{
 			PlayerManager->IncreaseScore();
+			if (NULLGUARD Ghost)
+			{
+				Ghost->IncreaseSpeedIncrement();
+				Ghost->SetTarget(GetOwner()->GetActorLocation());
+			}
 			PlayerPointRecieved = true;
 		}
 		ResetTimer = TimeBeforeReset;
