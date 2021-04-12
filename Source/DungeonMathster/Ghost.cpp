@@ -1,6 +1,7 @@
 #include "Ghost.h"
 #include "GameFramework/Actor.h"
 #include "Kismet/KismetMathLibrary.h"
+#include "Engine/World.h"
 #include "Kismet/GameplayStatics.h"
 #include "Math/UnrealMathUtility.h"
 
