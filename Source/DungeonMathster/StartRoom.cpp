@@ -69,17 +69,15 @@ void UStartRoom::LoadHighscore()
 
 void UStartRoom::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
-	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
-	if (TriggerVolume && TriggerVolume->IsOverlappingActor(Player))
+	if (HasOpenedDoor == false && DoorComponent && DoorComponent->IsOpen() == false)
 	{
-		if (DoorComponent && DoorComponent->IsOpen() == false)
-		{
-			DoorComponent->Open();
-		}
+		DoorComponent->Open();
+		HasOpenedDoor = true;
 	}
-	else
+	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
+	if (NULLGUARD TriggerVolume && TriggerVolume->IsOverlappingActor(Player) == false)
 	{
-		if (DoorComponent && DoorComponent->IsOpen())
+		if (NULLGUARD DoorComponent && DoorComponent->IsOpen())
 		{
 			DoorComponent->Close();
 		}

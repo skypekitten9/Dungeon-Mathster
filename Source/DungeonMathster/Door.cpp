@@ -99,7 +99,7 @@ void UDoor::Progress(float DeltaTime)
 
 void UDoor::PlaySound(bool Open)
 {
-	if (NULLGUARD !AudioComponent) return;
+	if (NULLGUARD !AudioComponent || OpenSounds.Num() <= 0 || CloseSounds.Num() <= 0) return;
 	if (Open)
 	{
 		int32 RandomNum = FMath::RandRange(0, OpenSounds.Num() - 1);

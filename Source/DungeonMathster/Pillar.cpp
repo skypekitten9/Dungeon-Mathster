@@ -98,7 +98,7 @@ void UPillar::SetupSound()
 
 void UPillar::PlaySound()
 {
-	if (NULLGUARD !AudioComponent) return;
+	if (NULLGUARD !AudioComponent || Sounds.Num() <= 0) return;
 	int32 RandomNum = FMath::RandRange(0, Sounds.Num() - 1);
 	if (NULLGUARD !Sounds[RandomNum]) return;
 	AudioComponent->SetSound(Sounds[RandomNum]);

@@ -163,7 +163,7 @@ bool URoom::IsCorrectPillarActivated()
 void URoom::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
-	if (TriggerVolume && TriggerVolume->IsOverlappingActor(Player))
+	if (NULLGUARD TriggerVolume && TriggerVolume->IsOverlappingActor(Player))
 	{
 		if (PlayerPointRecieved == false)
 		{
@@ -177,7 +177,7 @@ void URoom::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentT
 		}
 		ResetTimer = TimeBeforeReset;
 		HasReset = false;
-		if (DoorComponent && DoorComponent->IsOpen() == false && IsCorrectPillarActivated())
+		if (NULLGUARD DoorComponent && DoorComponent->IsOpen() == false && IsCorrectPillarActivated() && HasClosedDoor == false)
 		{
 			DoorComponent->Open();
 		}
@@ -186,8 +186,9 @@ void URoom::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentT
 	{
 		ResetTimer -= DeltaTime;
 		if (ResetTimer <= 0.f && HasReset == false) Reset();
-		if (DoorComponent && DoorComponent->IsOpen() == true)
+		if (NULLGUARD DoorComponent && DoorComponent->IsOpen() == true)
 		{
+			HasClosedDoor = false;
 			DoorComponent->Close();
 		}
 	}

@@ -53,5 +53,6 @@ private:
 	UPlayerManager* PlayerManager = nullptr;
 	float ResetTimer = 0.f;
 	bool HasReset = true;
+	bool HasClosedDoor = false;
 	bool PlayerPointRecieved = false;
 };

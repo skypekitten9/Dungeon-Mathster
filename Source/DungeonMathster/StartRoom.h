@@ -33,6 +33,7 @@ private:
 	void LoadHighscore();
 	UPROPERTY(EditAnywhere) AActor* DoorActor = nullptr;
 	UPROPERTY(EditAnywhere) ATriggerBox* TriggerVolume = nullptr;
+	bool HasOpenedDoor = false;
 	UDoor* DoorComponent = nullptr;
 	UTextRenderComponent* TextComponent = nullptr;
 	AActor* Player = nullptr;
