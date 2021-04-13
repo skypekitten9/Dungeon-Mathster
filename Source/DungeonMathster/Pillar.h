@@ -8,6 +8,8 @@
 #include "Ghost.h"
 #include "Kismet/GameplayStatics.h"
 #include "Components/TextRenderComponent.h"
+#include "Components/AudioComponent.h"
+#include "Sound/SoundBase.h"
 #include "Components/PrimitiveComponent.h"
 #include "Pillar.generated.h"
 
@@ -43,6 +45,13 @@ private:
 	UTextRenderComponent* TextComponent = nullptr;
 	FVector InitialPos, CurrentPos, TargetPos, InitialPosActorOnPillar;
 	FRotator InitialRotActorOnPillar;
+
+	//audio
+	UPROPERTY(EditAnywhere) TArray<USoundBase*> Sounds;
+	UAudioComponent* AudioComponent = nullptr;
+	void SetupSound();
+	void PlaySound();
+
 	void SetupPositions();
 	void SetupGhost();
 	void VerifyPointers();

@@ -37,6 +37,7 @@ void UPillar::BeginPlay()
 	VerifyPointers();
 	SetupPositions();
 	SetupGhost();
+	SetupSound();
 	if (NULLGUARD TextComponent) TextComponent->SetText(FText::FromString(Answer));
 }
 
@@ -75,6 +76,35 @@ void UPillar::SetupGhost()
 	}
 }
 
+void UPillar::SetupSound()
+{
+	AudioComponent = GetOwner()->FindComponentByClass<UAudioComponent>();
+	if (NULLGUARD !AudioComponent)
+	{
+		UE_LOG(LogTemp, Error, TEXT("Actor %s is missing component 'UAudioComponent'."), *(GetOwner()->GetName()));
+	}
+	if (Sounds.Num() == 0)
+	{
+		UE_LOG(LogTemp, Error, TEXT("Actor %s is missing sounds."), *(GetOwner()->GetName()));
+	}
+	for (USoundBase* s : Sounds)
+	{
+		if (NULLGUARD !s)
+		{
+			UE_LOG(LogTemp, Error, TEXT("Actor %s is missing a sound."), *(GetOwner()->GetName()));
+		}
+	}
+}
+
+void UPillar::PlaySound()
+{
+	if (NULLGUARD !AudioComponent) return;
+	int32 RandomNum = FMath::RandRange(0, Sounds.Num() - 1);
+	if (NULLGUARD !Sounds[RandomNum]) return;
+	AudioComponent->SetSound(Sounds[RandomNum]);
+	AudioComponent->Play();
+}
+
 void UPillar::VerifyPointers()
 {
 	if (NULLGUARD !ActorOnPillar)
@@ -98,6 +128,7 @@ void UPillar::VerifyPointers()
 void UPillar::ActivatePillar()
 {
 	if (NULLGUARD Ghost && CallGhostOnActivation) Ghost->IncreaseSpeedIncrement();
+	PlaySound();
 	Activated = true;
 	InProgress = true;
 }
