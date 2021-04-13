@@ -77,6 +77,8 @@ void UGhost::ProgressEndingGame(float DeltaTime)
 	ToRotate.Pitch = ToRotate.Pitch - FMath::FInterpTo(ToRotate.Pitch, TargetRotation.Pitch, DeltaTime, 2.f);
 	Player->AddControllerYawInput(ToRotate.Yaw);
 	Player->AddControllerPitchInput(ToRotate.Pitch);
+	CaughtPlayerLocation.Z = Player->GetTargetLocation().Z;
+	Player->SetActorLocation(CaughtPlayerLocation);
 
 }
 
@@ -95,9 +97,10 @@ void UGhost::VerifyTarget()
 void UGhost::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
-	if (FVector::Distance(GetOwner()->GetActorLocation(), Player->GetActorLocation()) <= Reach)
+	if (FVector::Distance(GetOwner()->GetActorLocation(), Player->GetActorLocation()) <= Reach && PlayerCaught == false)
 	{
 		PlayerCaught = true;
+		CaughtPlayerLocation = Player->GetTargetLocation();
 	}
 	if (PlayerCaught) ProgressEndingGame(DeltaTime);
 	else

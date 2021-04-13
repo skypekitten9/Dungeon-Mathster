@@ -37,6 +37,7 @@ private:
 	UPROPERTY(EditAnywhere) float SpeedIncreasePerIncrement = 10.f;
 	UPROPERTY(EditAnywhere) float Reach = 250.f;
 	UPROPERTY(EditAnywhere) float EndGameTimer = 1.5f;
+	FVector CaughtPlayerLocation;
 	APawn* Player = nullptr;
 	UPlayerManager* PlayerManager = nullptr;
 	bool PlayerCaught = false;
