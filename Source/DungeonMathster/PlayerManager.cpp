@@ -26,6 +26,12 @@ void UPlayerManager::IncreaseScore()
 	Score++;
 }
 
+void UPlayerManager::KillPlayer()
+{
+	SaveScore();
+	UGameplayStatics::OpenLevel(this, FName(*GetWorld()->GetName()), false);
+}
+
 void UPlayerManager::SaveScore()
 {
 	UHighscoreSave* SavedGame = Cast<UHighscoreSave>(UGameplayStatics::CreateSaveGameObject(UHighscoreSave::StaticClass()));

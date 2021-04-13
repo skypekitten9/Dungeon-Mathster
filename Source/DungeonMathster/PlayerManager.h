@@ -2,6 +2,7 @@
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
+#include "Engine/World.h"
 #include "HighscoreSave.h"
 #include "PlayerManager.generated.h"
 
@@ -15,6 +16,7 @@ public:
 	UPlayerManager();
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 	void IncreaseScore();
+	void KillPlayer();
 	int32 GetScore();
 
 protected:

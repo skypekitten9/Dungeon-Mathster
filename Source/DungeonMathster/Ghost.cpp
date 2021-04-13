@@ -30,6 +30,11 @@ void UGhost::SetupPlayer()
 		UE_LOG(LogTemp, Error, TEXT("Actor %s is missing a 'Player'."), *(GetOwner()->GetName()));
 		return;
 	}
+	PlayerManager = Player->FindComponentByClass<UPlayerManager>();
+	if (NULLGUARD !PlayerManager)
+	{
+		UE_LOG(LogTemp, Error, TEXT("Actor %s is missing a 'PlayerManager'."), *(GetOwner()->GetName()));
+	}
 }
 
 void UGhost::LookTowardsPlayer()
@@ -54,7 +59,7 @@ void UGhost::GoTowardsTarget(float DeltaTime)
 void UGhost::ProgressEndingGame(float DeltaTime)
 {
 	EndGameTimer -= DeltaTime;
-	if(EndGameTimer <= 0) UGameplayStatics::OpenLevel(this, FName(*GetWorld()->GetName()), false);
+	if(NULLGUARD PlayerManager && EndGameTimer <= 0) PlayerManager->KillPlayer();
 
 	//Get look towards rotation
 	FVector OffsetOwnerLocation = GetOwner()->GetActorLocation();

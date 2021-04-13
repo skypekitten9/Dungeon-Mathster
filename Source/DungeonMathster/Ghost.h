@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
 #include "GameFramework/Pawn.h"
+#include "PlayerManager.h"
 #include "Camera/CameraComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "Ghost.generated.h"
@@ -37,6 +38,7 @@ private:
 	UPROPERTY(EditAnywhere) float Reach = 250.f;
 	UPROPERTY(EditAnywhere) float EndGameTimer = 1.5f;
 	APawn* Player = nullptr;
+	UPlayerManager* PlayerManager = nullptr;
 	bool PlayerCaught = false;
 	bool TargetingActive = false;
 	bool TargetPlayer = false;
