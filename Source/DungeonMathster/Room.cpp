@@ -75,18 +75,19 @@ void URoom::SetupAnswers()
 	TArray<FString> IncorrectAnswers = { Quary.WrongAnswerA, Quary.WrongAnswerB };
 
 	int32 CorrectPillarIndex = FMath::RandRange(0, PillarComponents.Num()-1);
-	PillarComponents[CorrectPillarIndex]->SetAnswer(Quary.CorrectAnswer, true);
+	if (CorrectPillarIndex >= PillarComponents.Num()) return;
+	if(NULLGUARD PillarComponents[CorrectPillarIndex]) PillarComponents[CorrectPillarIndex]->SetAnswer(Quary.CorrectAnswer, true);
 
 	if (PillarActors.Num() > IncorrectAnswers.Num() + 1)
 	{
-		UE_LOG(LogTemp, Error, TEXT("%s has too many pillars attached."), *(GetOwner()->GetName()));
+		UE_LOG(LogTemp, Error, TEXT("%s has too many pillars attached. Maximum is 2."), *(GetOwner()->GetName()));
 		return;
 	}
 	int32 j = 0;
 	for (int32 i = 0; i < PillarComponents.Num(); i++)
 	{
 		if (i == CorrectPillarIndex) continue;
-		PillarComponents[i]->SetAnswer(IncorrectAnswers[j], false);
+		if(NULLGUARD PillarComponents[i]) PillarComponents[i]->SetAnswer(IncorrectAnswers[j], false);
 		j++;
 	}
 }

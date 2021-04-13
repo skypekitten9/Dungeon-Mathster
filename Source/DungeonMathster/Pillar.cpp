@@ -33,7 +33,7 @@ void UPillar::BeginPlay()
 {
 	Super::BeginPlay();
 	TextComponent = GetOwner()->FindComponentByClass<UTextRenderComponent>();
-	PrimitiveComponent = ActorOnPillar->FindComponentByClass<UPrimitiveComponent>();
+	if(NULLGUARD ActorOnPillar) PrimitiveComponent = ActorOnPillar->FindComponentByClass<UPrimitiveComponent>();
 	VerifyPointers();
 	SetupPositions();
 	SetupGhost();
@@ -47,6 +47,7 @@ void UPillar::SetupPositions()
 	CurrentPos = InitialPos;
 	TargetPos = InitialPos;
 	TargetPos.Z = InitialPos.Z - UnitsToLower;
+	if (NULLGUARD !ActorOnPillar) return;
 	InitialPosActorOnPillar = ActorOnPillar->GetActorLocation();
 	InitialRotActorOnPillar = ActorOnPillar->GetActorRotation();
 }
@@ -119,9 +120,8 @@ void UPillar::Reset()
 	//Resets
 	GetOwner()->SetActorLocation(InitialPos);
 	Activated = false;
-	if (NULLGUARD !ActorOnPillar) return;
-	ActorOnPillar->SetActorLocation(InitialPosActorOnPillar);
-	ActorOnPillar->SetActorRotation(InitialRotActorOnPillar);
+	if (NULLGUARD ActorOnPillar) ActorOnPillar->SetActorLocation(InitialPosActorOnPillar);
+	if (NULLGUARD ActorOnPillar) ActorOnPillar->SetActorRotation(InitialRotActorOnPillar);
 	if (NULLGUARD PrimitiveComponent) PrimitiveComponent->SetPhysicsLinearVelocity(FVector::ZeroVector);
 }
 
@@ -129,7 +129,16 @@ void UPillar::Reset()
 void UPillar::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
-	if (TriggerVolume->IsOverlappingActor(ActorOnPillar) == false && Activated == false) ActivatePillar();
+	if (
+		NULLGUARD TriggerVolume &&
+		NULLGUARD ActorOnPillar &&
+		TriggerVolume->IsOverlappingActor(ActorOnPillar) == false &&
+		Activated == false
+		)
+	{
+		ActivatePillar();
+	}
+
 	if (Activated && InProgress) Progress(DeltaTime);
 }
 
