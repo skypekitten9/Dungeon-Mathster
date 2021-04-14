@@ -19,8 +19,23 @@ void UGhost::BeginPlay()
 	Super::BeginPlay();
 	SetupPlayer();
 	Speed = InitialSpeed;
+	SetupSound();
 }
 
+
+void UGhost::SetupSound()
+{
+	AudioComponent = GetOwner()->FindComponentByClass<UAudioComponent>();
+	if (NULLGUARD !AudioComponent)
+	{
+		UE_LOG(LogTemp, Error, TEXT("Actor %s is missing component 'UAudioComponent'."), *(GetOwner()->GetName()));
+	}
+}
+
+void UGhost::PlaySound()
+{
+	if (NULLGUARD AudioComponent) AudioComponent->Play();
+}
 
 void UGhost::SetupPlayer()
 {
@@ -99,6 +114,7 @@ void UGhost::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponent
 	if (TargetPlayer && FVector::Distance(GetOwner()->GetActorLocation(), Player->GetActorLocation()) <= Reach && PlayerCaught == false)
 	{
 		PlayerCaught = true;
+		PlaySound();
 		CaughtPlayerLocation = Player->GetTargetLocation();
 	}
 	if (PlayerCaught) ProgressEndingGame(DeltaTime);

@@ -8,6 +8,8 @@
 #include "PlayerManager.h"
 #include "Camera/CameraComponent.h"
 #include "GameFramework/SpringArmComponent.h"
+#include "Components/AudioComponent.h"
+#include "Sound/SoundBase.h"
 #include "Ghost.generated.h"
 
 
@@ -26,14 +28,21 @@ protected:
 	virtual void BeginPlay() override;
 
 private:
+
+	//audio
+	void SetupSound();
+	void PlaySound();
+	UPROPERTY(EditAnywhere) TArray<USoundBase*> Sounds;
+	UAudioComponent* AudioComponent = nullptr;
+
 	void SetupPlayer();
 	void LookTowardsPlayer();
 	void GoTowardsTarget(float DeltaTime);
 	void ProgressEndingGame(float DeltaTime);
 	void VerifyTarget();
-	UPROPERTY(EditAnywhere) float InitialSpeed = 20.f;
-	UPROPERTY(EditAnywhere) float MaxSpeed = 250.f;
-	UPROPERTY(EditAnywhere) float TargetRoomSpeed = 300.f;
+	UPROPERTY(EditAnywhere) float InitialSpeed = 50.f;
+	UPROPERTY(EditAnywhere) float MaxSpeed = 300.f;
+	UPROPERTY(EditAnywhere) float TargetRoomSpeed = 400.f;
 	UPROPERTY(EditAnywhere) float SpeedIncreasePerIncrement = 10.f;
 	UPROPERTY(EditAnywhere) float Reach = 250.f;
 	UPROPERTY(EditAnywhere) float EndGameTimer = 1.5f;

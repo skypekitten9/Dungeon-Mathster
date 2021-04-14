@@ -5,6 +5,8 @@
 #include "Components/InputComponent.h"
 #include "GameFramework/PlayerController.h"
 #include "Components/PrimitiveComponent.h"
+#include "Components/AudioComponent.h"
+#include "Sound/SoundBase.h"
 #include "PhysicsEngine/PhysicsHandleComponent.h"
 #include "GraspComponent.generated.h"
 
@@ -22,6 +24,12 @@ protected:
 	virtual void BeginPlay() override;
 
 private:
+
+	//audio
+	void SetupSound();
+	void PlaySound();
+	UAudioComponent* AudioComponent = nullptr;
+
 	void SetupPhysicsHandle();
 	void SetupInputComponent();
 	void Grasp();

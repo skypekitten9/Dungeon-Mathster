@@ -15,6 +15,21 @@ void UGraspComponent::BeginPlay()
 	Super::BeginPlay();
 	SetupPhysicsHandle();
 	SetupInputComponent();
+	SetupSound();
+}
+
+void UGraspComponent::SetupSound()
+{
+	AudioComponent = GetOwner()->FindComponentByClass<UAudioComponent>();
+	if (NULLGUARD !AudioComponent)
+	{
+		UE_LOG(LogTemp, Error, TEXT("Actor %s is missing component 'UAudioComponent'."), *(GetOwner()->GetName()));
+	}
+}
+
+void UGraspComponent::PlaySound()
+{
+	if (NULLGUARD AudioComponent) AudioComponent->Play();
 }
 
 void UGraspComponent::SetupPhysicsHandle()
@@ -65,7 +80,11 @@ void UGraspComponent::Throw()
 
 	UPrimitiveComponent* PrimitiveToThrow = PhysicsHandle->GetGrabbedComponent();
 	if (NULLGUARD PhysicsHandle) PhysicsHandle->ReleaseComponent();
-	if (NULLGUARD PrimitiveToThrow) PrimitiveToThrow->AddForce(PlayerViewRotator.Vector() * ThrowForce);
+	if (NULLGUARD PrimitiveToThrow)
+	{
+		PrimitiveToThrow->AddForce(PlayerViewRotator.Vector() * ThrowForce);
+		PlaySound();
+	}
 }
 
 FRotator UGraspComponent::GetPhysicsRotatorOffset()
