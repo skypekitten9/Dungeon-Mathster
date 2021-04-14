@@ -48,10 +48,10 @@ void UGhost::LookTowardsPlayer()
 
 void UGhost::GoTowardsTarget(float DeltaTime)
 {
-	FVector ToMove = GetOwner()->GetActorLocation();
-	ToMove.X = FMath::FInterpConstantTo(ToMove.X, Target.X, DeltaTime, Speed);
-	ToMove.Y = FMath::FInterpConstantTo(ToMove.Y, Target.Y, DeltaTime, Speed);
-	GetOwner()->SetActorLocation(ToMove);
+	FVector ToMove = Target - GetOwner()->GetActorLocation();
+	ToMove.Z = 0;
+	ToMove = ToMove.GetSafeNormal() * Speed * DeltaTime;
+	GetOwner()->SetActorLocation(GetOwner()->GetActorLocation() + ToMove);
 	UE_LOG(LogTemp, Warning, TEXT("Speed: %f"), Speed);
 
 }

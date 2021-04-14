@@ -28,7 +28,9 @@ void UPlayerManager::IncreaseScore()
 
 void UPlayerManager::KillPlayer()
 {
-	SaveScore();
+	int CurrentScore = Score;
+	LoadScore();
+	if (Score < CurrentScore) SaveScore();
 	UGameplayStatics::OpenLevel(this, FName(*GetWorld()->GetName()), false);
 }
 

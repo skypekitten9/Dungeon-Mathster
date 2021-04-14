@@ -36,6 +36,13 @@ private:
 	bool CallGhostOnActivation = true;
 	bool Activated = false;
 	bool InProgress = false;
+
+	//audio
+	void SetupSound();
+	void PlaySound();
+	UPROPERTY(EditAnywhere) TArray<USoundBase*> Sounds;
+	UAudioComponent* AudioComponent = nullptr;
+
 	UPROPERTY(EditAnywhere) AActor* ActorOnPillar = nullptr;
 	UPROPERTY(EditAnywhere) ATriggerBox* TriggerVolume = nullptr;
 	UPROPERTY(EditAnywhere) float UnitsToLower = 30.f;
@@ -45,12 +52,6 @@ private:
 	UTextRenderComponent* TextComponent = nullptr;
 	FVector InitialPos, CurrentPos, TargetPos, InitialPosActorOnPillar;
 	FRotator InitialRotActorOnPillar;
-
-	//audio
-	UPROPERTY(EditAnywhere) TArray<USoundBase*> Sounds;
-	UAudioComponent* AudioComponent = nullptr;
-	void SetupSound();
-	void PlaySound();
 
 	void SetupPositions();
 	void SetupGhost();
