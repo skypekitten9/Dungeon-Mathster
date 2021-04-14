@@ -83,11 +83,22 @@ void UPillar::SetupSound()
 	{
 		UE_LOG(LogTemp, Error, TEXT("Actor %s is missing component 'UAudioComponent'."), *(GetOwner()->GetName()));
 	}
-	if (Sounds.Num() == 0)
+	if (WrongAnswerSounds.Num() == 0)
 	{
 		UE_LOG(LogTemp, Error, TEXT("Actor %s is missing sounds."), *(GetOwner()->GetName()));
 	}
-	for (USoundBase* s : Sounds)
+	for (USoundBase* s : WrongAnswerSounds)
+	{
+		if (NULLGUARD !s)
+		{
+			UE_LOG(LogTemp, Error, TEXT("Actor %s is missing a sound."), *(GetOwner()->GetName()));
+		}
+	}
+	if (PillarSounds.Num() == 0)
+	{
+		UE_LOG(LogTemp, Error, TEXT("Actor %s is missing sounds."), *(GetOwner()->GetName()));
+	}
+	for (USoundBase* s : PillarSounds)
 	{
 		if (NULLGUARD !s)
 		{
@@ -96,16 +107,29 @@ void UPillar::SetupSound()
 	}
 }
 
-void UPillar::PlaySound()
+void UPillar::PlayWrongAnswerSound()
 {
-	if (NULLGUARD !AudioComponent || Sounds.Num() <= 0) return;
-	int32 RandomNum = FMath::RandRange(0, Sounds.Num() - 1);
-	if (NULLGUARD !Sounds[RandomNum])
+	if (NULLGUARD !AudioComponent || WrongAnswerSounds.Num() <= 0) return;
+	int32 RandomNum = FMath::RandRange(0, WrongAnswerSounds.Num() - 1);
+	if (NULLGUARD !WrongAnswerSounds[RandomNum])
 	{
 		AudioComponent->Play();
 		return;
 	}
-	AudioComponent->SetSound(Sounds[RandomNum]);
+	AudioComponent->SetSound(WrongAnswerSounds[RandomNum]);
+	AudioComponent->Play();
+}
+
+void UPillar::PlayPillarSound()
+{
+	if (NULLGUARD !AudioComponent || PillarSounds.Num() <= 0) return;
+	int32 RandomNum = FMath::RandRange(0, PillarSounds.Num() - 1);
+	if (NULLGUARD !PillarSounds[RandomNum])
+	{
+		AudioComponent->Play();
+		return;
+	}
+	AudioComponent->SetSound(PillarSounds[RandomNum]);
 	AudioComponent->Play();
 }
 
@@ -131,8 +155,12 @@ void UPillar::VerifyPointers()
 
 void UPillar::ActivatePillar()
 {
-	if (NULLGUARD Ghost && CallGhostOnActivation) Ghost->IncreaseSpeedIncrement();
-	PlaySound();
+	if (NULLGUARD Ghost && CallGhostOnActivation)
+	{
+		Ghost->IncreaseSpeedIncrement();
+		PlayWrongAnswerSound();
+	}
+	else PlayPillarSound();
 	Activated = true;
 	InProgress = true;
 }
@@ -174,6 +202,6 @@ void UPillar::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponen
 		ActivatePillar();
 	}
 
-	if (Activated && InProgress) Progress(DeltaTime);
+	if (Activated && InProgress && CallGhostOnActivation == false) Progress(DeltaTime);
 }
 

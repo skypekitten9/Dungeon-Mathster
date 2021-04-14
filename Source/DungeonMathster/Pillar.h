@@ -39,9 +39,11 @@ private:
 
 	//audio
 	void SetupSound();
-	void PlaySound();
-	UPROPERTY(EditAnywhere) TArray<USoundBase*> Sounds;
-	UAudioComponent* AudioComponent = nullptr;
+	void PlayPillarSound();
+	void PlayWrongAnswerSound();
+	UPROPERTY(EditAnywhere) TArray<USoundBase*> PillarSounds;
+	UPROPERTY(EditAnywhere) TArray<USoundBase*> WrongAnswerSounds;
+	UAudioComponent* AudioComponent;
 
 	UPROPERTY(EditAnywhere) AActor* ActorOnPillar = nullptr;
 	UPROPERTY(EditAnywhere) ATriggerBox* TriggerVolume = nullptr;
