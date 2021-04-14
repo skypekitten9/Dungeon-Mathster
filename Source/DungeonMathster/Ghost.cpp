@@ -111,7 +111,11 @@ void UGhost::VerifyTarget()
 void UGhost::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
-	if (TargetPlayer && FVector::Distance(GetOwner()->GetActorLocation(), Player->GetActorLocation()) <= Reach && PlayerCaught == false)
+	FVector PlayerLocationWithoutZ = Player->GetActorLocation();
+	FVector GhostLocationWithoutZ = GetOwner()->GetActorLocation();
+	PlayerLocationWithoutZ.Z = 0;
+	GhostLocationWithoutZ.Z = 0;
+	if (TargetPlayer && FVector::Distance(GhostLocationWithoutZ, PlayerLocationWithoutZ) <= Reach && PlayerCaught == false)
 	{
 		PlayerCaught = true;
 		PlaySound();
