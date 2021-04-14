@@ -24,13 +24,12 @@ void UPlayerManager::TickComponent(float DeltaTime, ELevelTick TickType, FActorC
 void UPlayerManager::IncreaseScore()
 {
 	Score++;
+	UE_LOG(LogTemp, Warning, TEXT("Score: %s"), *FString::FromInt(Score));
 }
 
 void UPlayerManager::KillPlayer()
 {
-	int CurrentScore = Score;
-	LoadScore();
-	if (Score < CurrentScore) SaveScore();
+	if(LoadScore() < Score) SaveScore();
 	UGameplayStatics::OpenLevel(this, FName(*GetWorld()->GetName()), false);
 }
 
@@ -41,11 +40,11 @@ void UPlayerManager::SaveScore()
 	UGameplayStatics::SaveGameToSlot(SavedGame, TEXT("MySlot"), 0);
 }
 
-void UPlayerManager::LoadScore()
+int UPlayerManager::LoadScore()
 {
 	UHighscoreSave* LoadGame = Cast<UHighscoreSave>(UGameplayStatics::CreateSaveGameObject(UHighscoreSave::StaticClass()));
 	LoadGame = Cast<UHighscoreSave>(UGameplayStatics::LoadGameFromSlot("MySlot", 0));
-	Score = LoadGame->Score;
+	return LoadGame->Score;
 }
 
 int32 UPlayerManager::GetScore()

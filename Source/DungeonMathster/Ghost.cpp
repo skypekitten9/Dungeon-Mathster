@@ -52,7 +52,6 @@ void UGhost::GoTowardsTarget(float DeltaTime)
 	ToMove.Z = 0;
 	ToMove = ToMove.GetSafeNormal() * Speed * DeltaTime;
 	GetOwner()->SetActorLocation(GetOwner()->GetActorLocation() + ToMove);
-	UE_LOG(LogTemp, Warning, TEXT("Speed: %f"), Speed);
 
 }
 
@@ -97,7 +96,7 @@ void UGhost::VerifyTarget()
 void UGhost::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
-	if (FVector::Distance(GetOwner()->GetActorLocation(), Player->GetActorLocation()) <= Reach && PlayerCaught == false)
+	if (TargetPlayer && FVector::Distance(GetOwner()->GetActorLocation(), Player->GetActorLocation()) <= Reach && PlayerCaught == false)
 	{
 		PlayerCaught = true;
 		CaughtPlayerLocation = Player->GetTargetLocation();

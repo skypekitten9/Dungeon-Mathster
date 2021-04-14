@@ -24,6 +24,6 @@ protected:
 
 private:
 	void SaveScore();
-	void LoadScore();
+	int LoadScore();
 	int32 Score = 0;
 };
