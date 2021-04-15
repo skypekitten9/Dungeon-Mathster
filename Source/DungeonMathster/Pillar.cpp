@@ -183,9 +183,13 @@ void UPillar::Reset()
 	//Resets
 	GetOwner()->SetActorLocation(InitialPos);
 	Activated = false;
+	if (NULLGUARD ActorOnPillar && NULLGUARD PrimitiveComponent)
+	{
+		ActorOnPillar->GetRootComponent()->ComponentVelocity = FVector::ZeroVector;
+		PrimitiveComponent->SetPhysicsLinearVelocity(FVector::ZeroVector);
+	}
 	if (NULLGUARD ActorOnPillar) ActorOnPillar->SetActorLocation(InitialPosActorOnPillar);
 	if (NULLGUARD ActorOnPillar) ActorOnPillar->SetActorRotation(InitialRotActorOnPillar);
-	if (NULLGUARD PrimitiveComponent) PrimitiveComponent->SetPhysicsLinearVelocity(FVector::ZeroVector);
 }
 
 // Called every frame

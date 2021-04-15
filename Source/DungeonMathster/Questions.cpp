@@ -9,7 +9,7 @@ const TArray<Question> Questions::QuestionArray = {
 		Question("What letter is not included in 1 to 999?", "A", "E", "F"),
 		Question("What is 2 + 5?", "7", "9", "6"),
 		Question("What's 9 + 10?", "19", "21", "18"),
-		Question("What's 9 * 10?", "90", "82", "100"),
+		Question("What's 9 - 10?", "1", "90", "45"),
 		Question("What day in May is world bee day?", "20", "14", "6"),
 		Question("What day in April is international jazz day?", "30", "4", "12"),
 		Question("What day in June is world oceans day?", "8", "2", "16"),
@@ -20,6 +20,12 @@ const TArray<Question> Questions::QuestionArray = {
 		Question("Do cats have arms or legs?", "Legs", "Arms", "Both"),
 		Question("Do fish have arms or legs?", "None", "Arms", "Both"),
 		Question("Do humans have arms or legs?", "Both", "Arms", "Legs"),
+		Question("How many legs does a snake have?", "0", "2", "1"),
+		Question("What number comes after 4?", "5", "3", "6"),
+		Question("What is the meaning of the universe?", "42", "28", "32"),
+		Question("What is not a number?", "D", "4", "2"),
+		Question("What is not a letter?", "6", "D", "T"),
+		Question("Another name for bread?", "Bun", "Fun", "Two"),
 		Question("How many legs does a cat have?", "4", "6", "12")
 };
 

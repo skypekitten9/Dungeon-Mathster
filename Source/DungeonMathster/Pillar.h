@@ -9,6 +9,7 @@
 #include "Kismet/GameplayStatics.h"
 #include "Components/TextRenderComponent.h"
 #include "Components/AudioComponent.h"
+#include "GameFramework/Actor.h"
 #include "Sound/SoundBase.h"
 #include "Components/PrimitiveComponent.h"
 #include "Pillar.generated.h"
