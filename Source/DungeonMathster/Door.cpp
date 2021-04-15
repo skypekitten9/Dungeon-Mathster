@@ -1,15 +1,13 @@
 #include "Door.h"
-#include "GameFramework/Actor.h"
-#include "Math/UnrealMathUtility.h"
 
 #define OUT
 #define NULLGUARD
 
+#pragma region Main Methods
 UDoor::UDoor()
 {
 	PrimaryComponentTick.bCanEverTick = true;
 }
-
 
 // Called when the game starts
 void UDoor::BeginPlay()
@@ -19,14 +17,18 @@ void UDoor::BeginPlay()
 	SetupSound();
 }
 
-void UDoor::SetupRotators()
+// Called every frame
+void UDoor::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
-	InitialRotation = GetOwner()->GetActorRotation();
-	CurrentRotation = InitialRotation;
-	TargetRotation = InitialRotation;
-	TargetRotation.Yaw = InitialRotation.Yaw + DegreesToOpen;
+	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
+	if (InProgress)
+	{
+		Progress(DeltaTime);
+	}
 }
+#pragma endregion Main Methods
 
+#pragma region Setup
 void UDoor::SetupSound()
 {
 	AudioComponent = GetOwner()->FindComponentByClass<UAudioComponent>();
@@ -54,6 +56,15 @@ void UDoor::SetupSound()
 	}
 }
 
+void UDoor::SetupRotators()
+{
+	InitialRotation = GetOwner()->GetActorRotation();
+	CurrentRotation = InitialRotation;
+	TargetRotation = InitialRotation;
+	TargetRotation.Yaw = InitialRotation.Yaw + DegreesToOpen;
+}
+#pragma endregion Setup
+
 void UDoor::Close()
 {
 	InProgress = true;
@@ -62,39 +73,17 @@ void UDoor::Close()
 	PlaySound(false);
 }
 
+bool UDoor::IsOpen()
+{
+	return Opened;
+}
+
 void UDoor::Open()
 {
 	InProgress = true;
 	Opened = true;
 	TargetRotation.Yaw = InitialRotation.Yaw + DegreesToOpen;
 	PlaySound(true);
-}
-
-bool UDoor::IsOpen()
-{
-	return Opened;
-}
-
-void UDoor::Progress(float DeltaTime)
-{
-	CurrentRotation = GetOwner()->GetActorRotation();
-	FRotator ToRotate = InitialRotation;
-	float Speed = 0.f;
-	if (IsOpen())
-	{
-		Speed = OpenSpeed;
-	}
-	else
-	{
-		Speed = CloseSpeed;
-	}
-	ToRotate.Yaw = FMath::FInterpTo(CurrentRotation.Yaw, TargetRotation.Yaw, DeltaTime, Speed);
-	GetOwner()->SetActorRotation(ToRotate);
-	if (FMath::IsNearlyEqual(ToRotate.Yaw, TargetRotation.Yaw, 1.f))
-	{
-		InProgress = false;
-		UE_LOG(LogTemp, Display, TEXT("Door progression done!"));
-	}
 }
 
 void UDoor::PlaySound(bool Open)
@@ -115,13 +104,27 @@ void UDoor::PlaySound(bool Open)
 	AudioComponent->Play();
 }
 
-// Called every frame
-void UDoor::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
+void UDoor::Progress(float DeltaTime)
 {
-	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
-	if (InProgress)
+	//Set speed and get current rotation
+	CurrentRotation = GetOwner()->GetActorRotation();
+	float Speed = 0.f;
+	if (IsOpen())
 	{
-		Progress(DeltaTime);
+		Speed = OpenSpeed;
+	}
+	else
+	{
+		Speed = CloseSpeed;
+	}
+
+	//Set rotation
+	FRotator ToRotate = FRotator::ZeroRotator;
+	ToRotate.Yaw = FMath::FInterpTo(CurrentRotation.Yaw, TargetRotation.Yaw, DeltaTime, Speed);
+	GetOwner()->SetActorRotation(ToRotate);
+	if (FMath::IsNearlyEqual(ToRotate.Yaw, TargetRotation.Yaw, 1.f))
+	{
+		InProgress = false;
+		UE_LOG(LogTemp, Display, TEXT("Door progression done!"));
 	}
 }
-

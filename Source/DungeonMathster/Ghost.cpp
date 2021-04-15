@@ -1,42 +1,41 @@
 #include "Ghost.h"
-#include "GameFramework/Actor.h"
-#include "Kismet/KismetMathLibrary.h"
-#include "Engine/World.h"
-#include "Kismet/GameplayStatics.h"
-#include "Math/UnrealMathUtility.h"
 
-
+#define OUT
 #define NULLGUARD
+
+#pragma region Main Methods
 UGhost::UGhost()
 {
 	PrimaryComponentTick.bCanEverTick = true;
 }
-
 
 // Called when the game starts
 void UGhost::BeginPlay()
 {
 	Super::BeginPlay();
 	SetupPlayer();
-	Speed = InitialSpeed;
 	SetupSound();
+
+	Speed = InitialSpeed;
 }
 
-
-void UGhost::SetupSound()
+// Called every frame
+void UGhost::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
-	AudioComponent = GetOwner()->FindComponentByClass<UAudioComponent>();
-	if (NULLGUARD !AudioComponent)
+	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
+	if (PlayerCaught == false)
 	{
-		UE_LOG(LogTemp, Error, TEXT("Actor %s is missing component 'UAudioComponent'."), *(GetOwner()->GetName()));
+		TryCatchingPlayer();
+		VerifyTarget();
+		if (TargetingActive) GoTowardsTarget(DeltaTime);
 	}
-}
+	else ProgressEndingGame(DeltaTime);
+	LookTowardsPlayer();
 
-void UGhost::PlaySound()
-{
-	if (NULLGUARD AudioComponent) AudioComponent->Play();
 }
+#pragma endregion Main Methods
 
+#pragma region Setup
 void UGhost::SetupPlayer()
 {
 	Player = GetWorld()->GetFirstPlayerController()->GetPawn();
@@ -52,15 +51,17 @@ void UGhost::SetupPlayer()
 	}
 }
 
-void UGhost::LookTowardsPlayer()
+void UGhost::SetupSound()
 {
-	FRotator NewRotation = UKismetMathLibrary::FindLookAtRotation(GetOwner()->GetActorLocation(), Player->GetActorLocation());
-	NewRotation.Pitch = 0.f;
-	NewRotation.Roll = 0.f;
-	NewRotation.Yaw -= 90.f;
-	GetOwner()->SetActorRotation(NewRotation);
+	AudioComponent = GetOwner()->FindComponentByClass<UAudioComponent>();
+	if (NULLGUARD !AudioComponent)
+	{
+		UE_LOG(LogTemp, Error, TEXT("Actor %s is missing component 'UAudioComponent'."), *(GetOwner()->GetName()));
+	}
 }
+#pragma endregion Setup
 
+//Moves towards target ignoring height (z)
 void UGhost::GoTowardsTarget(float DeltaTime)
 {
 	FVector ToMove = Target - GetOwner()->GetActorLocation();
@@ -70,15 +71,40 @@ void UGhost::GoTowardsTarget(float DeltaTime)
 
 }
 
+//Rotates yaw to look at player
+void UGhost::LookTowardsPlayer()
+{
+	FRotator NewRotation = UKismetMathLibrary::FindLookAtRotation(GetOwner()->GetActorLocation(), Player->GetActorLocation());
+	NewRotation.Pitch = 0.f;
+	NewRotation.Roll = 0.f;
+	NewRotation.Yaw += ModelYawOffset; //Used model has incorrect forward vector
+	GetOwner()->SetActorRotation(NewRotation);
+}
+
+//Increases speed
+void UGhost::IncreaseSpeed()
+{
+	SpeedIncrement++;
+	if (TargetPlayer) Speed = InitialSpeed + (SpeedIncrement * SpeedIncreasePerIncrement);
+}
+
+void UGhost::PlaySound()
+{
+	if (NULLGUARD AudioComponent) AudioComponent->Play();
+}
+
+//Forces player to look at ghost then resets game
 void UGhost::ProgressEndingGame(float DeltaTime)
 {
 	EndGameTimer -= DeltaTime;
-	if(NULLGUARD PlayerManager && EndGameTimer <= 0) PlayerManager->KillPlayer();
+	if (NULLGUARD PlayerManager && EndGameTimer <= 0) PlayerManager->KillPlayer(); //Delay reseting game
 
-	//Get look towards rotation
+	//Calculate look at ghost rotation for player
 	FVector OffsetOwnerLocation = GetOwner()->GetActorLocation();
-	OffsetOwnerLocation.Z += 50;
+	OffsetOwnerLocation.Z += ModelZOffset;
 	FRotator TargetRotation = UKismetMathLibrary::FindLookAtRotation(Player->GetActorLocation(), OffsetOwnerLocation);
+
+	//Get current player rotation
 	FRotator ToRotate;
 	FVector PlayerViewPos;
 	GetWorld()->GetFirstPlayerController()->GetPlayerViewPoint(
@@ -86,49 +112,33 @@ void UGhost::ProgressEndingGame(float DeltaTime)
 		OUT ToRotate
 	);
 
-	//Get difference and apply rotation
+	//Interpolate and set players rotation
 	ToRotate.Yaw = FMath::FInterpTo(ToRotate.Yaw, TargetRotation.Yaw, DeltaTime, 2.f) - ToRotate.Yaw;
 	ToRotate.Pitch = ToRotate.Pitch - FMath::FInterpTo(ToRotate.Pitch, TargetRotation.Pitch, DeltaTime, 2.f);
-	Player->AddControllerYawInput(ToRotate.Yaw);
-	Player->AddControllerPitchInput(ToRotate.Pitch);
-	CaughtPlayerLocation.Z = Player->GetTargetLocation().Z;
-	Player->SetActorLocation(CaughtPlayerLocation);
-
-}
-
-void UGhost::VerifyTarget()
-{
-	if (FMath::IsNearlyEqual(GetOwner()->GetTargetLocation().X, Target.X, 10.f) && FMath::IsNearlyEqual(GetOwner()->GetTargetLocation().Y, Target.Y, 10.f))
+	if (NULLGUARD Player)
 	{
-		TargetPlayer = true;
-		Speed = InitialSpeed + (SpeedIncrement * SpeedIncreasePerIncrement);
-		if (Speed > MaxSpeed) Speed = MaxSpeed;
+		Player->AddControllerYawInput(ToRotate.Yaw);
+		Player->AddControllerPitchInput(ToRotate.Pitch);
+		CaughtPlayerLocation.Z = Player->GetTargetLocation().Z;
+		Player->SetActorLocation(CaughtPlayerLocation);
 	}
-	if(TargetPlayer) Target = Player->GetActorLocation();
 }
 
-// Called every frame
-void UGhost::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
+void UGhost::TryCatchingPlayer()
 {
-	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
+	//Ignore height difference
 	FVector PlayerLocationWithoutZ = Player->GetActorLocation();
 	FVector GhostLocationWithoutZ = GetOwner()->GetActorLocation();
 	PlayerLocationWithoutZ.Z = 0;
 	GhostLocationWithoutZ.Z = 0;
-	if (TargetPlayer && FVector::Distance(GhostLocationWithoutZ, PlayerLocationWithoutZ) <= Reach && PlayerCaught == false)
+
+	//Check if player is within reach and act accordingly
+	if (NULLGUARD Player && TargetPlayer && FVector::Distance(GhostLocationWithoutZ, PlayerLocationWithoutZ) <= Reach)
 	{
 		PlayerCaught = true;
 		PlaySound();
 		CaughtPlayerLocation = Player->GetTargetLocation();
 	}
-	if (PlayerCaught) ProgressEndingGame(DeltaTime);
-	else
-	{
-		VerifyTarget();
-		if(TargetingActive) GoTowardsTarget(DeltaTime);
-	}
-	LookTowardsPlayer();
-
 }
 
 void UGhost::SetTarget(FVector NewTarget)
@@ -139,9 +149,14 @@ void UGhost::SetTarget(FVector NewTarget)
 	TargetPlayer = false;
 }
 
-void UGhost::IncreaseSpeedIncrement()
+//Checks if target has been reached, if true changes target to player
+void UGhost::VerifyTarget()
 {
-	SpeedIncrement++;
-	if(TargetPlayer) Speed = InitialSpeed + (SpeedIncrement * SpeedIncreasePerIncrement);
+	if (FMath::IsNearlyEqual(GetOwner()->GetTargetLocation().X, Target.X, 10.f) && FMath::IsNearlyEqual(GetOwner()->GetTargetLocation().Y, Target.Y, 10.f))
+	{
+		TargetPlayer = true;
+		Speed = InitialSpeed + (SpeedIncrement * SpeedIncreasePerIncrement);
+		if (Speed > MaxSpeed) Speed = MaxSpeed;
+	}
+	if (NULLGUARD Player && TargetPlayer) Target = Player->GetActorLocation();
 }
-

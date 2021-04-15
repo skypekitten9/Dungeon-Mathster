@@ -1,10 +1,9 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
 #pragma once
-
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
 #include "Components/AudioComponent.h"
+#include "GameFramework/Actor.h"
+#include "Math/UnrealMathUtility.h"
 #include "Sound/SoundBase.h"
 #include "Door.generated.h"
 
@@ -25,17 +24,21 @@ protected:
 	virtual void BeginPlay() override;
 
 private:
+	void PlaySound(bool open);
+	void Progress(float DeltaTime);
 	void SetupRotators();
 	void SetupSound();
-	void Progress(float DeltaTime);
-	void PlaySound(bool open);
-	UPROPERTY(EditAnywhere) TArray<USoundBase*> OpenSounds;
-	UPROPERTY(EditAnywhere) TArray<USoundBase*> CloseSounds;
+
+	UPROPERTY(EditAnywhere) float CloseSpeed = 2;
 	UPROPERTY(EditAnywhere) float DegreesToOpen = 90.f;
 	UPROPERTY(EditAnywhere) float OpenSpeed = 2;
-	UPROPERTY(EditAnywhere) float CloseSpeed = 2;
-	UAudioComponent* AudioComponent = nullptr;
-	FRotator InitialRotation, TargetRotation, CurrentRotation;
+	UPROPERTY(EditAnywhere) TArray<USoundBase*> CloseSounds;
+	UPROPERTY(EditAnywhere) TArray<USoundBase*> OpenSounds;
+
 	bool InProgress = false;
 	bool Opened = false;
+	FRotator CurrentRotation;
+	FRotator InitialRotation;
+	FRotator TargetRotation;
+	UAudioComponent* AudioComponent = nullptr;
 };

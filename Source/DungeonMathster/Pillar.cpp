@@ -157,7 +157,7 @@ void UPillar::ActivatePillar()
 {
 	if (NULLGUARD Ghost && CallGhostOnActivation)
 	{
-		Ghost->IncreaseSpeedIncrement();
+		Ghost->IncreaseSpeed();
 		PlayWrongAnswerSound();
 	}
 	else PlayPillarSound();

@@ -1,14 +1,16 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
 #pragma once
-
-#include "CoreMinimal.h"
-#include "Components/ActorComponent.h"
-#include "GameFramework/Pawn.h"
-#include "PlayerManager.h"
 #include "Camera/CameraComponent.h"
-#include "GameFramework/SpringArmComponent.h"
+#include "Components/ActorComponent.h"
 #include "Components/AudioComponent.h"
+#include "CoreMinimal.h"
+#include "Engine/World.h"
+#include "GameFramework/Actor.h"
+#include "GameFramework/Pawn.h"
+#include "GameFramework/SpringArmComponent.h"
+#include "Kismet/GameplayStatics.h"
+#include "Kismet/KismetMathLibrary.h"
+#include "Math/UnrealMathUtility.h"
+#include "PlayerManager.h"
 #include "Sound/SoundBase.h"
 #include "Ghost.generated.h"
 
@@ -21,38 +23,40 @@ class DUNGEONMATHSTER_API UGhost : public UActorComponent
 public:	
 	UGhost();
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
+	void IncreaseSpeed();
 	void SetTarget(FVector NewTarget);
-	void IncreaseSpeedIncrement();
 
 protected:
 	virtual void BeginPlay() override;
 
 private:
-
-	//audio
-	void SetupSound();
-	void PlaySound();
-	UPROPERTY(EditAnywhere) TArray<USoundBase*> Sounds;
-	UAudioComponent* AudioComponent = nullptr;
-
-	void SetupPlayer();
-	void LookTowardsPlayer();
 	void GoTowardsTarget(float DeltaTime);
+	void LookTowardsPlayer();
+	void PlaySound();
 	void ProgressEndingGame(float DeltaTime);
+	void SetupPlayer();
+	void SetupSound();
+	void TryCatchingPlayer();
 	void VerifyTarget();
+
+	UPROPERTY(EditAnywhere) float EndGameTimer = 1.5f;
 	UPROPERTY(EditAnywhere) float InitialSpeed = 50.f;
 	UPROPERTY(EditAnywhere) float MaxSpeed = 300.f;
-	UPROPERTY(EditAnywhere) float TargetRoomSpeed = 400.f;
-	UPROPERTY(EditAnywhere) float SpeedIncreasePerIncrement = 10.f;
+	UPROPERTY(EditAnywhere) float ModelYawOffset = -90.f;
+	UPROPERTY(EditAnywhere) float ModelZOffset = 50.f;
 	UPROPERTY(EditAnywhere) float Reach = 250.f;
-	UPROPERTY(EditAnywhere) float EndGameTimer = 1.5f;
-	FVector CaughtPlayerLocation;
+	UPROPERTY(EditAnywhere) float SpeedIncreasePerIncrement = 10.f;
+	UPROPERTY(EditAnywhere) float TargetRoomSpeed = 400.f;
+	UPROPERTY(EditAnywhere) TArray<USoundBase*> Sounds;
+
 	APawn* Player = nullptr;
-	UPlayerManager* PlayerManager = nullptr;
 	bool PlayerCaught = false;
 	bool TargetingActive = false;
 	bool TargetPlayer = false;
-	FVector Target;
 	float Speed;
+	FVector CaughtPlayerLocation;
+	FVector Target;
 	int SpeedIncrement = 0;
+	UAudioComponent* AudioComponent = nullptr;
+	UPlayerManager* PlayerManager = nullptr;
 };

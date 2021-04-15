@@ -170,7 +170,7 @@ void URoom::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentT
 			PlayerManager->IncreaseScore();
 			if (NULLGUARD Ghost)
 			{
-				Ghost->IncreaseSpeedIncrement();
+				Ghost->IncreaseSpeed();
 				Ghost->SetTarget(GetOwner()->GetActorLocation());
 			}
 			PlayerPointRecieved = true;
